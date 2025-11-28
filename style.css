@@ -1,0 +1,439 @@
+/* ================================================= */
+/* [WASM Lotto] High-End Dark Metallic Theme (Final) */
+/* ================================================= */
+
+:root {
+    --bg-main: #121212;
+    --bg-card: #1e1e1e;
+    --bg-input: #2c2c2c;
+
+    --text-main: #e0e0e0;
+    --text-sub: #a0a0a0;
+
+    --accent-color: #10b981;
+
+    --border-color: #333333;
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    line-height: 1.5;
+}
+
+h1,
+h3,
+h4 {
+    color: var(--text-main);
+    margin-top: 0;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 40px;
+    letter-spacing: -1px;
+}
+
+/* 상태 텍스트 기본 스타일 (로딩 중) */
+.status-loading {
+    color: #e67700;
+    /* 오렌지색 */
+}
+
+/* 상태 텍스트 성공 (JS에서 클래스 교체 시 사용) */
+.status-success {
+    color: #40c057;
+    /* 녹색 */
+}
+
+/* 상태 텍스트 오류 (JS에서 클래스 교체 시 사용) */
+.status-error {
+    color: #fa5252;
+    /* 빨간색 */
+}
+
+/* === 상태 바 === */
+.status-bar {
+    background: var(--bg-card);
+    padding: 15px 25px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+/* === 탭 컨테이너 === */
+.tab-container {
+    background: #000000;
+    padding: 6px;
+    border-radius: 12px;
+    display: flex;
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    gap: 5px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: var(--bg-card);
+    color: var(--accent-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* === 컨트롤 패널 === */
+.control-panel {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+/* === 버튼: 하이엔드 다크 메탈릭 === */
+button.action-btn {
+    background:
+        linear-gradient(145deg, #1a1a1a, #0f0f0f),
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.06), transparent 70%);
+    background-blend-mode: overlay;
+
+    color: #e5e5e5;
+    font-weight: 600;
+    font-size: 16px;
+
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: 1px solid #333333;
+    outline: none;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 10px rgba(0, 0, 0, 0.5),
+        0 6px 12px rgba(0, 0, 0, 0.4);
+
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+button.action-btn:hover {
+    background:
+        linear-gradient(145deg, #252525, #161616),
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.12), transparent 75%);
+    border-color: #4a4a4a;
+    color: #ffffff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 8px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+button.action-btn:active {
+    transform: translateY(1px) scale(0.98);
+    background: linear-gradient(145deg, #0d0d0d, #050505);
+    border-color: #222;
+    box-shadow:
+        inset 0 2px 10px rgba(0, 0, 0, 0.8),
+        0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+button.action-btn:disabled {
+    background: #151515;
+    color: #555;
+    border-color: #222;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* === 입력 필드 === */
+input[type="number"] {
+    background-color: var(--bg-input);
+    color: #fff;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    text-align: center;
+}
+
+input[type="number"]:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* === 결과 리스트 === */
+.output-box {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.msg-empty {
+    text-align: center;
+    color: var(--text-sub);
+    padding: 40px 0;
+    font-style: italic;
+}
+
+/* === 아이템 레이아웃 (3단 분할) === */
+.item {
+    background: var(--bg-card);
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 1. 인덱스 번호 (1,000단위 콤마 적용) */
+.item-index {
+    color: #d1d5db;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Roboto Mono', monospace;
+    width: 90px;
+    text-align: left;
+    letter-spacing: -0.5px;
+    opacity: 0.9;
+}
+
+/* 2. 로또 공 (42px) */
+.item-balls {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+/* 3. 합계 태그 (기본 스타일) */
+.item-info {
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+/* === [동적] 합계 범위별 색상 === */
+
+/* ~120: 차분한 파랑 */
+.tag-low {
+    background: #1e3a8a;
+    color: #93c5fd;
+    border: 1px solid #1e40af;
+}
+
+/* 121~160: 안정적인 초록 (평균) */
+.tag-mid {
+    background: #1e3a2f;
+    color: #4ade80;
+    border: 1px solid #166534;
+}
+
+/* 161~180: 경고성 오렌지 */
+.tag-high {
+    background: #451a03;
+    color: #fdba74;
+    border: 1px solid #9a3412;
+}
+
+/* 181~: 강렬한 레드 */
+.tag-very-high {
+    background: #450a0a;
+    color: #fca5a5;
+    border: 1px solid #991b1b;
+}
+
+
+/* === 로또 공 디자인 === */
+.lotto-ball {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+
+    color: white;
+    font-weight: 800;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+
+    box-shadow:
+        inset -4px -4px 8px rgba(0, 0, 0, 0.5),
+        inset 3px 3px 6px rgba(255, 255, 255, 0.25),
+        2px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* 공 색상 */
+.ball-y,
+.ball-yellow {
+    background: linear-gradient(135deg, #fbc400, #997700);
+    color: #111;
+    /* text-shadow: none; */
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6);
+}
+
+.ball-b,
+.ball-blue {
+    background: linear-gradient(135deg, #69c8f2, #2d6d85);
+}
+
+.ball-r,
+.ball-red {
+    background: linear-gradient(135deg, #ff7272, #a32f2f);
+    text-shadow: 1px 1px 0px rgba(3, 3, 3, 0.6);
+}
+
+.ball-g,
+.ball-grey {
+    /* background: linear-gradient(135deg, #a0a0a0, #555555); */
+    /* background: linear-gradient(135deg, #d4d4d4, #6b6b6b);
+        color: #111;
+        text-shadow: none; */
+        background: linear-gradient(135deg, #f5f5f5 0%, #9ca3af 100%);
+        color: #111827;
+        /* text-shadow: none; */
+        /* [수정] 텍스트 그림자: 흰색으로 살짝 눌러주어 각인 효과(Engraved) */
+        text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.6);
+        /* border: 1px solid #6c7075; */
+}
+
+.ball-gn,
+.ball-green {
+    background: linear-gradient(135deg, #b0d840, #5f7520); 
+    color: #111;
+    text-shadow: none;     
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 라디오 버튼 그룹 컨테이너 */
+.radio-group {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 15px;
+}
+
+/* 클릭 가능한 라디오 라벨 */
+.radio-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* 라디오 버튼과 텍스트 사이 간격 */
+}
+
+/* 입력 필드 행 컨테이너 (Flexbox) */
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    /* 화면이 좁아지면 줄바꿈 */
+}
+
+/* 입력 그룹 (최소/최대 입력 등) */
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* 숨겨진 입력 그룹 (JS 토글용) */
+.input-group.hidden {
+    display: none;
+    /* style="display:none" 대체 */
+}
+
+/* 검색 버튼 전용 마진 */
+.search-btn {
+    margin-left: 10px;
+}
+
+/* 마르코프 탭 설명 텍스트 */
+.markov-desc {
+    color: #a0a0a0;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+}
+
+/* 마르코프 입력 컨트롤 컨테이너 */
+.markov-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* 입력 필드 라벨 (작은 회색 텍스트) */
+.input-label-text {
+    color: #888;
+    font-size: 0.8em;
+    display: block;
+    margin-bottom: 4px;
+    /* 라벨과 입력창 사이 간격 미세 조정 */
+}
+
+/* 작은 입력 필드 (너비 조정) */
+.input-sm {
+    width: 60px;
+}
+
+/* 중간 입력 필드 */
+.input-md {
+    width: 80px;
+}
