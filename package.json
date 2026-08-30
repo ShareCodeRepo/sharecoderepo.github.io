@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --root src",
+    "build": "vite build && node scripts/copy-dist.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
