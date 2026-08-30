@@ -15,24 +15,18 @@ function getRestGuide(temperature) {
   if (temp >= 31.5) {
     return {
       level: "high",
-      title: "1시간 휴식",
-      text: "고온입니다. 1시간 휴식이 필요합니다.",
+      title: "1시간 추가 휴식",
     };
   }
 
   if (temp >= 28.5) {
     return {
       level: "mid",
-      title: "30분 휴식",
-      text: "더위가 있습니다. 30분 휴식을 권장합니다.",
+      title: "30분 추가 휴식",
     };
   }
 
-  return {
-    level: "ok",
-    title: "정상 활동",
-    text: "휴식이 필요하지 않습니다.",
-  };
+  return null;
 }
 
 function App() {
@@ -126,12 +120,9 @@ function App() {
                 관측시간
               </div>
 
-              <div className="time">
-                {weather.time}
-              </div>
-
-              <div className="date">
-                {weather.date}
+              <div className="date-time">
+                <span className="date">{weather.date}</span>
+                <span className="time">{weather.time}</span>
               </div>
             </section>
 
@@ -179,13 +170,8 @@ function App() {
                   <div className="rest-guide-icon" aria-hidden="true">
                     ⏱
                   </div>
-                  <div className="rest-guide-body">
-                    <div className="rest-guide-title">
-                      {restGuide.title}
-                    </div>
-                    <div className="rest-guide-text">
-                      {restGuide.text}
-                    </div>
+                  <div className="rest-guide-title">
+                    {restGuide.title}
                   </div>
                 </div>
               );
