@@ -193,11 +193,6 @@ function App() {
             <footer className="footer">
 
               <div>
-                관측시간&nbsp;
-                <strong>{weather.time}</strong>
-              </div>
-
-              <div>
                 1분마다 자동 갱신
               </div>
 
