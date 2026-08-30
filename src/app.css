@@ -154,21 +154,22 @@ button {
     gap: 10px;
 }
 
-.date-time .time {
-    font-size: 40px;
-    line-height: 1.05;
+.date-time .time,
+.date-time .date {
+    font-size: 16px;
+    line-height: 1.4;
 
-    font-weight: 700;
+    font-weight: 600;
 
-    letter-spacing: -2px;
+    letter-spacing: -0.5px;
 
     color: #cbd5e1;
 }
 
 .date-time .date {
-    color: #64748b;
+    color: #94a3b8;
 
-    font-size: 14px;
+    font-weight: 500;
 }
 
 .weather-values {
@@ -287,8 +288,10 @@ button {
 }
 
 .rest-guide-title {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 800;
+
+    line-height: 1;
 }
 
 .rest-guide--high .rest-guide-title {
@@ -359,8 +362,9 @@ button {
         padding: 24px 18px;
     }
 
-    .date-time .time {
-        font-size: 32px;
+    .date-time .time,
+    .date-time .date {
+        font-size: 14px;
     }
 
     .temperature,

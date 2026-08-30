@@ -84,7 +84,7 @@ function App() {
 
         <header className="header">
           <div>
-            <h1>현재 기상</h1>
+            <h1>현재 온도</h1>
             <div className="station">
               AWS 관측소 294
             </div>
