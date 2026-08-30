@@ -15,7 +15,7 @@ function App() {
     try {
       setError("");
 
-      const response = await fetch(WEATHER_API, {
+      const response = await fetch(`${WEATHER_API}?t=${Date.now()}`, {
         cache: "no-store",
       });
 
