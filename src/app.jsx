@@ -26,7 +26,10 @@ function getRestGuide(temperature) {
     };
   }
 
-  return null;
+  return {
+    level: "ok",
+    title: "추가 휴식 불필요",
+  };
 }
 
 function App() {
@@ -136,8 +139,11 @@ function App() {
 
                   <div className="label">
                     기온
-                    <span className="label-en">Temperature</span>
                   </div>
+                </div>
+
+                <div className="label-en">
+                  Temperature
                 </div>
 
                 <div className="temperature">
@@ -154,8 +160,11 @@ function App() {
 
                   <div className="label">
                     습도
-                    <span className="label-en">Humidity</span>
                   </div>
+                </div>
+
+                <div className="label-en">
+                  Humidity
                 </div>
 
                 <div className="humidity">
