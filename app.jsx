@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import "./App.css";
+import "./app.css";
 
 // 실제 Cloudflare Worker 주소로 변경
 const WEATHER_API =
