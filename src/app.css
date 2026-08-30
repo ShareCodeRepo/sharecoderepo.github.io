@@ -133,6 +133,19 @@ button {
     text-align: center;
 }
 
+.observation-label {
+    margin-bottom: 10px;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
 .time {
     font-size: 64px;
     line-height: 1;

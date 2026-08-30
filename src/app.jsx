@@ -92,6 +92,10 @@ function App() {
         {weather && (
           <>
             <section className="observation">
+              <div className="observation-label">
+                관측시간
+              </div>
+
               <div className="time">
                 {weather.time}
               </div>
@@ -140,7 +144,7 @@ function App() {
             <footer className="footer">
 
               <div>
-                관측 시각&nbsp;
+                관측시간&nbsp;
                 <strong>{weather.time}</strong>
               </div>
 
