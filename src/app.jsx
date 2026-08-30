@@ -129,13 +129,15 @@ function App() {
             <section className="weather-values">
 
               <div className="weather-item">
-                <div className="item-icon" aria-hidden="true">
-                  🌡
-                </div>
+                <div className="item-header">
+                  <div className="item-icon" aria-hidden="true">
+                    🌡
+                  </div>
 
-                <div className="label">
-                  기온
-                  <span className="label-en">Temperature</span>
+                  <div className="label">
+                    기온
+                    <span className="label-en">Temperature</span>
+                  </div>
                 </div>
 
                 <div className="temperature">
@@ -145,13 +147,15 @@ function App() {
               </div>
 
               <div className="weather-item">
-                <div className="item-icon" aria-hidden="true">
-                  💧
-                </div>
+                <div className="item-header">
+                  <div className="item-icon" aria-hidden="true">
+                    💧
+                  </div>
 
-                <div className="label">
-                  습도
-                  <span className="label-en">Humidity</span>
+                  <div className="label">
+                    습도
+                    <span className="label-en">Humidity</span>
+                  </div>
                 </div>
 
                 <div className="humidity">

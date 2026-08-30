@@ -204,35 +204,41 @@ button {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
 }
 
+.item-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    margin-bottom: 14px;
+}
+
 .item-icon {
-    font-size: 22px;
+    font-size: 20px;
 
     line-height: 1;
-
-    margin-bottom: 12px;
 }
 
 .label {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-
-    margin-bottom: 12px;
+    gap: 1px;
 
     color: #cbd5e1;
 
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .label-en {
     color: #64748b;
 
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 400;
 
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 
     text-transform: uppercase;
 }
