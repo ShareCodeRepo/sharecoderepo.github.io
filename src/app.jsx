@@ -28,7 +28,7 @@ function getRestGuide(temperature) {
 
   return {
     level: "ok",
-    title: "추가 휴식 불필요",
+    title: "정상 근무",
   };
 }
 
