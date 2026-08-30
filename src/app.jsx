@@ -15,7 +15,7 @@ function App() {
     try {
       setError("");
 
-      const response = await fetch(`${WEATHER_API}?t=${Date.now()}`, {
+      const response = await fetch(WEATHER_API, {
         cache: "no-store",
       });
 
@@ -45,11 +45,11 @@ function App() {
     loadWeather();
   }, [loadWeather]);
 
-  // 5분마다 갱신
+  // 1분마다 갱신
   useEffect(() => {
     const timer = setInterval(() => {
       loadWeather();
-    }, 5 * 60 * 1000);
+    }, 60 * 1000);
 
     return () => clearInterval(timer);
   }, [loadWeather]);
@@ -145,7 +145,7 @@ function App() {
               </div>
 
               <div>
-                5분마다 자동 갱신
+                1분마다 자동 갱신
               </div>
 
               {lastChecked && (
