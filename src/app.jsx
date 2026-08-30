@@ -5,6 +5,36 @@ import "./app.css";
 const WEATHER_API =
   "https://summer-snowflake-ccd3.excellwork.workers.dev/";
 
+function getRestGuide(temperature) {
+  const temp = Number(temperature);
+
+  if (!Number.isFinite(temp)) {
+    return null;
+  }
+
+  if (temp >= 31.5) {
+    return {
+      level: "high",
+      title: "1시간 휴식",
+      text: "고온입니다. 1시간 휴식이 필요합니다.",
+    };
+  }
+
+  if (temp >= 28.5) {
+    return {
+      level: "mid",
+      title: "30분 휴식",
+      text: "더위가 있습니다. 30분 휴식을 권장합니다.",
+    };
+  }
+
+  return {
+    level: "ok",
+    title: "정상 활동",
+    text: "휴식이 필요하지 않습니다.",
+  };
+}
+
 function App() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -140,6 +170,26 @@ function App() {
               </div>
 
             </section>
+
+            {(() => {
+              const restGuide = getRestGuide(weather.temperature);
+
+              return restGuide && (
+                <div className={`rest-guide rest-guide--${restGuide.level}`}>
+                  <div className="rest-guide-icon" aria-hidden="true">
+                    ⏱
+                  </div>
+                  <div className="rest-guide-body">
+                    <div className="rest-guide-title">
+                      {restGuide.title}
+                    </div>
+                    <div className="rest-guide-text">
+                      {restGuide.text}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             <footer className="footer">
 

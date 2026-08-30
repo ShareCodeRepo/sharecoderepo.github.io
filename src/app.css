@@ -128,13 +128,13 @@ button {
 }
 
 .observation {
-    margin-top: 45px;
+    margin-top: 30px;
 
     text-align: center;
 }
 
 .observation-label {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 
     color: #64748b;
 
@@ -147,20 +147,22 @@ button {
 }
 
 .time {
-    font-size: 64px;
-    line-height: 1;
+    font-size: 40px;
+    line-height: 1.05;
 
     font-weight: 700;
 
-    letter-spacing: -3px;
+    letter-spacing: -2px;
+
+    color: #cbd5e1;
 }
 
 .date {
-    margin-top: 12px;
+    margin-top: 8px;
 
-    color: #94a3b8;
+    color: #64748b;
 
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .weather-values {
@@ -230,10 +232,11 @@ button {
 
 .temperature,
 .humidity {
-    font-size: 34px;
-    font-weight: 700;
+    font-size: 46px;
+    line-height: 1.1;
+    font-weight: 800;
 
-    background: linear-gradient(180deg, #f8fafc 0%, #94a3b8 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #7dd3fc 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -243,8 +246,71 @@ button {
 .humidity span {
     margin-left: 3px;
 
-    font-size: 18px;
-    font-weight: 400;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.rest-guide {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 20px;
+
+    padding: 14px 16px;
+
+    border-radius: 16px;
+
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.rest-guide--high {
+    background: linear-gradient(135deg, rgba(153, 27, 27, 0.35), rgba(127, 29, 29, 0.2));
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.rest-guide--mid {
+    background: linear-gradient(135deg, rgba(146, 64, 14, 0.3), rgba(120, 53, 15, 0.15));
+    border-color: rgba(251, 191, 36, 0.4);
+}
+
+.rest-guide--ok {
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.3), rgba(22, 101, 52, 0.15));
+    border-color: rgba(74, 222, 128, 0.4);
+}
+
+.rest-guide-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.rest-guide-body {
+    text-align: left;
+}
+
+.rest-guide-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.rest-guide--high .rest-guide-title {
+    color: #fca5a5;
+}
+
+.rest-guide--mid .rest-guide-title {
+    color: #fcd34d;
+}
+
+.rest-guide--ok .rest-guide-title {
+    color: #86efac;
+}
+
+.rest-guide-text {
+    margin-top: 3px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
 }
 
 .footer {
@@ -308,11 +374,11 @@ button {
     }
 
     .time {
-        font-size: 54px;
+        font-size: 34px;
     }
 
     .temperature,
     .humidity {
-        font-size: 30px;
+        font-size: 38px;
     }
 }
