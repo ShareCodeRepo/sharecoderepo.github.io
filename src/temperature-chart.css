@@ -11,6 +11,32 @@
     border: 1px solid rgba(148, 163, 184, 0.12);
 }
 
+.temp-chart-header {
+    margin-bottom: 8px;
+
+    text-align: center;
+}
+
+.temp-chart-title {
+    color: #cbd5e1;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.temp-chart-sub {
+    margin-top: 2px;
+
+    color: #64748b;
+
+    font-size: 9px;
+    font-weight: 400;
+
+    letter-spacing: 0.5px;
+
+    text-transform: uppercase;
+}
+
 .temp-chart-svg {
     width: 100%;
     height: auto;

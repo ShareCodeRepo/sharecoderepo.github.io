@@ -51,6 +51,15 @@ function TemperatureChart({ history }) {
 
   return (
     <div className="temp-chart">
+      <div className="temp-chart-header">
+        <div className="temp-chart-title">
+          온도 그래프
+        </div>
+        <div className="temp-chart-sub">
+          Temperature Graph
+        </div>
+      </div>
+
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="temp-chart-svg"
