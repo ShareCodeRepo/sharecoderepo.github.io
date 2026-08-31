@@ -9,7 +9,7 @@ import "./temperature-chart.css";
 const WIDTH = 320;
 const HEIGHT = 140;
 const PADDING_X = 24;
-const PADDING_TOP = 34; // 라벨 공간 확보
+const PADDING_TOP = 28; // 라벨 공간 확보
 const PADDING_BOTTOM = 24;
 
 function TemperatureChart({ history }) {
