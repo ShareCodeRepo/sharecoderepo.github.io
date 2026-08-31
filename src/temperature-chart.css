@@ -4,7 +4,7 @@
 .temp-chart {
     margin-top: 24px;
 
-    padding: 16px 8px 8px;
+    padding: 12px 8px 6px;
 
     border-radius: 16px;
     background: rgba(15, 23, 42, 0.6);
@@ -12,7 +12,7 @@
 }
 
 .temp-chart-header {
-    margin-bottom: 2px;
+    margin-bottom: 0;
 
     text-align: center;
 }

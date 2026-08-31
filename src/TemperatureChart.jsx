@@ -7,10 +7,10 @@ import { useMemo } from "react";
 import "./temperature-chart.css";
 
 const WIDTH = 320;
-const HEIGHT = 140;
+const HEIGHT = 112;
 const PADDING_X = 24;
-const PADDING_TOP = 28; // 라벨 공간 확보
-const PADDING_BOTTOM = 24;
+const PADDING_TOP = 24; // 라벨 공간 확보
+const PADDING_BOTTOM = 20;
 
 function TemperatureChart({ history }) {
   const points = useMemo(() => {
