@@ -33,6 +33,24 @@ function getRestGuide(temperature) {
   };
 }
 
+// 관측 시각과 현재 시각의 차이(분) 계산
+function getMinutesAgo(latest) {
+  if (!latest || !latest.date || !latest.time) {
+    return null;
+  }
+
+  const obs = new Date(`${latest.date}T${latest.time}:00`);
+
+  if (Number.isNaN(obs.getTime())) {
+    return null;
+  }
+
+  const diffMs = Date.now() - obs.getTime();
+  const minutes = Math.max(0, Math.round(diffMs / 60000));
+
+  return minutes;
+}
+
 function App() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -144,6 +162,12 @@ function App() {
                 <span className="date">{latest.date}</span>
                 <span className="time">{latest.time}</span>
               </div>
+
+              {getMinutesAgo(latest) !== null && (
+                <div className="age">
+                  {getMinutesAgo(latest)}분 전 관측
+                </div>
+              )}
             </section>
 
             <section className="weather-values">
