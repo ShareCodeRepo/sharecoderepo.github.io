@@ -1,0 +1,46 @@
+/* temperature-chart.css */
+/* app.css의 다크 테마(#0f172a/#1e293b 계열, #38bdf8 포인트 컬러)와 톤을 맞춤 */
+
+.temp-chart {
+    margin-top: 24px;
+
+    padding: 16px 8px 8px;
+
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.temp-chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.temp-chart-value {
+    font-size: 12px;
+    font-weight: 700;
+    fill: #94a3b8;
+}
+
+.temp-chart-value--latest {
+    font-size: 14px;
+    fill: #f8fafc;
+}
+
+.temp-chart-dot {
+    fill: #1e293b;
+    stroke: #38bdf8;
+    stroke-width: 2;
+}
+
+.temp-chart-dot--latest {
+    fill: #38bdf8;
+    stroke: #f8fafc;
+    stroke-width: 1.5;
+}
+
+.temp-chart-time {
+    font-size: 10px;
+    fill: #64748b;
+}

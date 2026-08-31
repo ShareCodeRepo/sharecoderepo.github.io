@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./app.css";
+import TemperatureChart from "./TemperatureChart";
 
 // 실제 Cloudflare Worker 주소로 변경
 const WEATHER_API =
   "https://summer-snowflake-ccd3.excellwork.workers.dev/";
-
-// 요청 타임아웃 (ms)
-const REQUEST_TIMEOUT = 10000;
 
 function getRestGuide(temperature) {
   const temp = Number(temperature);
@@ -35,42 +33,20 @@ function getRestGuide(temperature) {
   };
 }
 
-// 응답 필드 검증 (Worker 파싱이 깨져도 undefined가 화면에 찍히지 않도록)
-function isValidWeather(data) {
-  if (!data || typeof data !== "object") {
-    return false;
-  }
-
-  const temperature = Number(data.temperature);
-  const humidity = Number(data.humidity);
-
-  return (
-    Number.isFinite(temperature) &&
-    Number.isFinite(humidity) &&
-    typeof data.date === "string" &&
-    typeof data.time === "string"
-  );
-}
-
 function App() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lastChecked, setLastChecked] = useState(null);
 
+  // 이전 요청을 취소하기 위한 참조 (경쟁 상태 방지)
   const abortRef = useRef(null);
 
   const loadWeather = useCallback(async () => {
-    // 이전 요청 취소 (경쟁 상태 방지)
+    // 이전에 진행 중이던 요청이 있으면 취소
     abortRef.current?.abort();
-
     const controller = new AbortController();
     abortRef.current = controller;
-
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      REQUEST_TIMEOUT
-    );
 
     try {
       setError("");
@@ -90,22 +66,17 @@ function App() {
         throw new Error(data.error);
       }
 
-      if (!isValidWeather(data)) {
-        throw new Error("기상 데이터 형식이 올바르지 않습니다.");
-      }
-
+      // 응답 구조: { latest: {...}, history: [...] }
       setWeather(data);
       setLastChecked(new Date());
 
     } catch (err) {
       if (err.name === "AbortError") {
-        // 타임아웃 또는 이전 요청 취소로 인한 중단
-        return;
+        return; // 취소된 요청은 에러로 취급하지 않음
       }
       console.error(err);
       setError(err.message || "데이터를 가져오지 못했습니다.");
     } finally {
-      clearTimeout(timeoutId);
       setLoading(false);
     }
   }, []);
@@ -113,52 +84,19 @@ function App() {
   // 최초 접속 즉시 조회
   useEffect(() => {
     loadWeather();
-
-    return () => abortRef.current?.abort();
   }, [loadWeather]);
 
-  // 1분마다 갱신 (탭이 보이는 동안만)
+  // 1분마다 갱신
   useEffect(() => {
-    let timer = null;
+    const timer = setInterval(() => {
+      loadWeather();
+    }, 60 * 1000);
 
-    const startPolling = () => {
-      if (document.visibilityState === "visible") {
-        loadWeather();
-        timer = setInterval(loadWeather, 60 * 1000);
-      }
-    };
-
-    const stopPolling = () => {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
-    };
-
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        stopPolling();
-        startPolling();
-      } else {
-        stopPolling();
-      }
-    };
-
-    startPolling();
-
-    document.addEventListener("visibilitychange", handleVisibility);
-
-    return () => {
-      stopPolling();
-      document.removeEventListener("visibilitychange", handleVisibility);
-      abortRef.current?.abort();
-    };
+    return () => clearInterval(timer);
   }, [loadWeather]);
 
-  const restGuide = useMemo(
-    () => (weather ? getRestGuide(weather.temperature) : null),
-    [weather]
-  );
+  const latest = weather?.latest;
+  const history = weather?.history ?? [];
 
   return (
     <div className="app">
@@ -182,7 +120,7 @@ function App() {
           </button>
         </header>
 
-        {loading && !weather && (
+        {loading && !latest && (
           <div className="loading">
             데이터를 가져오는 중...
           </div>
@@ -195,7 +133,7 @@ function App() {
           </div>
         )}
 
-        {weather && (
+        {latest && (
           <>
             <section className="observation">
               <div className="observation-label">
@@ -203,8 +141,8 @@ function App() {
               </div>
 
               <div className="date-time">
-                <span className="date">{weather.date}</span>
-                <span className="time">{weather.time}</span>
+                <span className="date">{latest.date}</span>
+                <span className="time">{latest.time}</span>
               </div>
             </section>
 
@@ -226,7 +164,7 @@ function App() {
                 </div>
 
                 <div className="temperature">
-                  {weather.temperature}
+                  {latest.temperature}
                   <span>℃</span>
                 </div>
               </div>
@@ -247,23 +185,31 @@ function App() {
                 </div>
 
                 <div className="humidity">
-                  {weather.humidity}
+                  {latest.humidity}
                   <span>%</span>
                 </div>
               </div>
 
             </section>
 
-            {restGuide && (
-              <div className={`rest-guide rest-guide--${restGuide.level}`}>
-                <div className="rest-guide-icon" aria-hidden="true">
-                  ⏱
-                </div>
-                <div className="rest-guide-title">
-                  {restGuide.title}
-                </div>
-              </div>
+            {history.length > 0 && (
+              <TemperatureChart history={history} />
             )}
+
+            {(() => {
+              const restGuide = getRestGuide(latest.temperature);
+
+              return restGuide && (
+                <div className={`rest-guide rest-guide--${restGuide.level}`}>
+                  <div className="rest-guide-icon" aria-hidden="true">
+                    ⏱
+                  </div>
+                  <div className="rest-guide-title">
+                    {restGuide.title}
+                  </div>
+                </div>
+              );
+            })()}
 
             <footer className="footer">
 
