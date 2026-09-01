@@ -6,14 +6,32 @@ import TemperatureChart from "./TemperatureChart";
 const WEATHER_API =
   "https://summer-snowflake-ccd3.excellwork.workers.dev/";
 
-// 휴식 안내 적용 시간대 (11:40 ~ 14:00)
-const REST_START_MIN = 11 * 60 + 40; // 11:40
-const REST_END_MIN = 14 * 60; // 14:00
+// 휴식 안내 적용 시간대
+const REST_10M_WINDOWS = [
+  { start: 9 * 60 + 30, end: 10 * 60 + 20 }, // 09:30 ~ 10:20
+  { start: 14 * 60 + 30, end: 15 * 60 + 20 }, // 14:30 ~ 15:20
+];
 
-function isRestTime(now = new Date()) {
+// 온도 기반 안내 적용 시간대 (11:40 ~ 14:00)
+const REST_TEMP_START_MIN = 11 * 60 + 40; // 11:40
+const REST_TEMP_END_MIN = 14 * 60; // 14:00
+
+function isInWindow(minutes, start, end) {
+  return minutes >= start && minutes < end;
+}
+
+function get10mRest(now = new Date()) {
   const minutes = now.getHours() * 60 + now.getMinutes();
 
-  return minutes >= REST_START_MIN && minutes < REST_END_MIN;
+  return REST_10M_WINDOWS.some(
+    (w) => isInWindow(minutes, w.start, w.end)
+  );
+}
+
+function isTempRestTime(now = new Date()) {
+  const minutes = now.getHours() * 60 + now.getMinutes();
+
+  return isInWindow(minutes, REST_TEMP_START_MIN, REST_TEMP_END_MIN);
 }
 
 function getRestGuide(temperature) {
@@ -23,8 +41,18 @@ function getRestGuide(temperature) {
     return null;
   }
 
-  // 적용 시간대가 아니면 안내 표시 안 함
-  if (!isRestTime()) {
+  const now = new Date();
+
+  // 10분 연장 휴식 시간대 (09:30~10:20, 14:30~15:20)
+  if (get10mRest(now)) {
+    return {
+      level: "mid",
+      title: "10분 연장 휴식",
+    };
+  }
+
+  // 온도 기반 안내 시간대 (11:40~14:00)
+  if (!isTempRestTime(now)) {
     return null;
   }
 
