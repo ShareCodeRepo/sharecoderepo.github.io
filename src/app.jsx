@@ -193,6 +193,27 @@ function App() {
                 </div>
               </div>
 
+              <div className="weather-item weather-item--secondary">
+                <div className="item-header">
+                  <div className="item-icon" aria-hidden="true">
+                    🥵
+                  </div>
+
+                  <div className="label">
+                    체감온도
+                  </div>
+                </div>
+
+                <div className="label-en">
+                  Feels Like
+                </div>
+
+                <div className="feels-like">
+                  {latest.feels_like}
+                  <span>℃</span>
+                </div>
+              </div>
+
               <div className="weather-item">
                 <div className="item-header">
                   <div className="item-icon" aria-hidden="true">
@@ -232,27 +253,6 @@ function App() {
                 <div className="wind-speed">
                   {latest.wind_speed}
                   <span>m/s</span>
-                </div>
-              </div>
-
-              <div className="weather-item weather-item--secondary">
-                <div className="item-header">
-                  <div className="item-icon" aria-hidden="true">
-                    🥵
-                  </div>
-
-                  <div className="label">
-                    체감온도
-                  </div>
-                </div>
-
-                <div className="label-en">
-                  Feels Like
-                </div>
-
-                <div className="feels-like">
-                  {latest.feels_like}
-                  <span>℃</span>
                 </div>
               </div>
 
