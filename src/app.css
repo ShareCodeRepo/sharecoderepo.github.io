@@ -278,6 +278,33 @@ button {
     font-weight: 600;
 }
 
+.weather-item--secondary {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.weather-item--secondary .label-en {
+    margin-bottom: 8px;
+}
+
+.wind-speed,
+.feels-like {
+    font-size: 26px;
+    line-height: 1.1;
+    font-weight: 700;
+
+    color: #cbd5e1;
+}
+
+.wind-speed span,
+.feels-like span {
+    margin-left: 3px;
+
+    font-size: 13px;
+    font-weight: 400;
+
+    color: #94a3b8;
+}
+
 .rest-guide {
     display: flex;
     align-items: center;
@@ -400,5 +427,10 @@ button {
     .temperature,
     .humidity {
         font-size: 38px;
+    }
+
+    .wind-speed,
+    .feels-like {
+        font-size: 22px;
     }
 }
