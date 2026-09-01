@@ -124,7 +124,7 @@ function App() {
           <div>
             <h1>현재 온도</h1>
             <div className="station">
-              경상남도 거제시 장평동
+              한화오션 야드
             </div>
           </div>
 
