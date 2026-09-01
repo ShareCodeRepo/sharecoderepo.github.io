@@ -52,9 +52,9 @@ button {
 
 .weather-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 460px;
 
-    padding: 28px 24px;
+    padding: 28px 20px;
 
     background:
         linear-gradient(
