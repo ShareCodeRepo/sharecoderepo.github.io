@@ -207,13 +207,13 @@ function App() {
               <div className="date-time">
                 <span className="date">{latest.date}</span>
                 <span className="time">{latest.time}</span>
-              </div>
 
-              {getMinutesAgo(latest) !== null && (
-                <div className="age">
-                  {getMinutesAgo(latest)}분 전 관측
-                </div>
-              )}
+                {getMinutesAgo(latest) !== null && (
+                  <span className="age">
+                    {getMinutesAgo(latest)}분 전 관측
+                  </span>
+                )}
+              </div>
             </section>
 
             <section className="weather-values">
