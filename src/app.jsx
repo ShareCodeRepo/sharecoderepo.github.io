@@ -6,10 +6,25 @@ import TemperatureChart from "./TemperatureChart";
 const WEATHER_API =
   "https://summer-snowflake-ccd3.excellwork.workers.dev/";
 
+// 휴식 안내 적용 시간대 (11:40 ~ 14:00)
+const REST_START_MIN = 11 * 60 + 40; // 11:40
+const REST_END_MIN = 14 * 60; // 14:00
+
+function isRestTime(now = new Date()) {
+  const minutes = now.getHours() * 60 + now.getMinutes();
+
+  return minutes >= REST_START_MIN && minutes < REST_END_MIN;
+}
+
 function getRestGuide(temperature) {
   const temp = Number(temperature);
 
   if (!Number.isFinite(temp)) {
+    return null;
+  }
+
+  // 적용 시간대가 아니면 안내 표시 안 함
+  if (!isRestTime()) {
     return null;
   }
 
