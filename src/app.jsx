@@ -165,7 +165,10 @@ function App() {
 
         <header className="header">
           <div>
-            <h1>현재 온도</h1>
+            <h1>
+              현재 온도
+              <span className="header-en">(Current Temperature)</span>
+            </h1>
             <div className="station">
               한화오션 야드
             </div>
