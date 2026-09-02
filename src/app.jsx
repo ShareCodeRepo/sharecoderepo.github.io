@@ -43,12 +43,17 @@ function getRestGuide(temperature) {
 
   const now = new Date();
 
-  // 10분 연장 휴식 시간대 (09:30~10:20, 14:30~15:20) — 28.5℃ 이상일 때
-  if (get10mRest(now) && temp >= 28.5) {
-    return {
-      level: "mid",
-      title: "10분 연장 휴식",
-    };
+  // 10분 연장 휴식 시간대 (09:30~10:20, 14:30~15:20)
+  if (get10mRest(now)) {
+    return temp >= 28.5
+      ? {
+          level: "mid",
+          title: "10분 연장 휴식",
+        }
+      : {
+          level: "ok",
+          title: "연장 없음",
+        };
   }
 
   // 온도 기반 안내 시간대 (11:40~14:00)
