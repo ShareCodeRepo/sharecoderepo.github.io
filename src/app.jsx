@@ -6,6 +6,69 @@ import TemperatureChart from "./TemperatureChart";
 const WEATHER_API =
   "https://summer-snowflake-ccd3.excellwork.workers.dev/";
 
+// 위치 확인 실패 시 기본 지점 (한화오션 야드)
+const FALLBACK_POINT = { lat: 34.8833, lon: 128.7167 };
+
+const GRID_URL = "kma_grid_light.json";
+
+let gridPromise = null;
+let gridCache = null;
+
+function loadGrid() {
+  if (gridCache) {
+    return Promise.resolve(gridCache);
+  }
+
+  if (!gridPromise) {
+    gridPromise = fetch(GRID_URL)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        gridCache = data;
+        return data;
+      })
+      .catch((err) => {
+        gridPromise = null;
+        throw err;
+      });
+  }
+
+  return gridPromise;
+}
+
+function findNearest(grid, lat, lon) {
+  const latCos = Math.cos((lat * Math.PI) / 180);
+  let best = null;
+  let bestDist = Infinity;
+
+  for (const g of grid) {
+    const dLat = g.lat - lat;
+    const dLon = (g.lon - lon) * latCos;
+    const d = dLat * dLat + dLon * dLon;
+
+    if (d < bestDist) {
+      bestDist = d;
+      best = g;
+    }
+  }
+
+  return best;
+}
+
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 300000,
+    });
+  });
+}
+
 // 휴식 안내 적용 시간대
 const REST_10M_WINDOWS = [
   { start: 9 * 60 + 30, end: 10 * 60 + 20 }, // 09:30 ~ 10:20
@@ -104,11 +167,20 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lastChecked, setLastChecked] = useState(null);
+  const [grid, setGrid] = useState(null);
+  const [station, setStation] = useState(null);
+  const [locStatus, setLocStatus] = useState("locating");
+
+  const coordsRef = useRef(null);
 
   // 이전 요청을 취소하기 위한 참조 (경쟁 상태 방지)
   const abortRef = useRef(null);
 
   const loadWeather = useCallback(async () => {
+    if (!station) {
+      return;
+    }
+
     // 이전에 진행 중이던 요청이 있으면 취소
     abortRef.current?.abort();
     const controller = new AbortController();
@@ -117,7 +189,12 @@ function App() {
     try {
       setError("");
 
-      const response = await fetch(WEATHER_API, {
+      const url = new URL(WEATHER_API);
+      url.searchParams.set("name", station.name);
+      url.searchParams.set("nx", String(station.nx));
+      url.searchParams.set("ny", String(station.ny));
+
+      const response = await fetch(url, {
         cache: "no-store",
         signal: controller.signal,
       });
@@ -145,12 +222,77 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [station]);
 
   // 최초 접속 즉시 조회
   useEffect(() => {
     loadWeather();
   }, [loadWeather]);
+
+  // 관측 지점 격자 데이터 로드
+  useEffect(() => {
+    let cancelled = false;
+
+    loadGrid()
+      .then((g) => {
+        if (!cancelled) return;
+        setGrid(g);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError("관측 지점 정보를 불러오지 못했습니다.");
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // 위치 권한 확인 → 가장 가까운 관측 지점으로 전환
+  useEffect(() => {
+    if (!grid) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const apply = (point, status) => {
+      if (cancelled) return;
+
+      setStation(findNearest(grid, point.lat, point.lon));
+      setLocStatus(status);
+    };
+
+    if (coordsRef.current) {
+      apply(coordsRef.current, "located");
+      return;
+    }
+
+    apply(FALLBACK_POINT, "locating");
+
+    if (!("geolocation" in navigator)) {
+      setLocStatus("denied");
+      return;
+    }
+
+    getCurrentPosition()
+      .then((pos) => {
+        coordsRef.current = {
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+        };
+        apply(coordsRef.current, "located");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLocStatus("denied");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [grid]);
 
   // 1분마다 갱신
   useEffect(() => {
@@ -175,7 +317,30 @@ function App() {
               <span className="header-en">(Current Temperature)</span>
             </h1>
             <div className="station">
-              한화오션 야드
+              {latest?.station_addr ? (
+                <>
+                  <span className="station-name">
+                    {latest.station_name} 관측
+                  </span>
+                  <span className="station-addr">
+                    {latest.station_addr}
+                  </span>
+                </>
+              ) : station ? (
+                station.name
+              ) : (
+                "관측 지점 확인 중…"
+              )}
+              {!latest?.station_addr && locStatus === "locating" && (
+                <span className="station-note">
+                  위치 확인 중…
+                </span>
+              )}
+              {!latest?.station_addr && locStatus === "denied" && (
+                <span className="station-note">
+                  위치 확인 불가 · 기본 위치로 조회
+                </span>
+              )}
             </div>
           </div>
 

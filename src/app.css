@@ -111,6 +111,37 @@ button {
     font-size: 13px;
 }
 
+.station-name {
+    display: block;
+
+    color: #cbd5e1;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.station-addr {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.station-note {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #fbbf24;
+
+    font-size: 11px;
+    font-weight: 500;
+}
+
 .refresh-button {
     width: 42px;
     height: 42px;
