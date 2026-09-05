@@ -1,51 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./app.css";
 import TemperatureChart from "./TemperatureChart";
+import kmaGrid from "./data/kma_grid_light.json";
 
 // 실제 Cloudflare Worker 주소로 변경
 const WEATHER_API =
   "https://summer-snowflake-ccd3.excellwork.workers.dev/";
 
-// 위치 확인 실패 시 기본 지점 (한화오션 야드)
-const FALLBACK_POINT = { lat: 34.8833, lon: 128.7167 };
+// 위치 확인 실패 시 기본 지점 (294 거제 - 장평동)
+const DEFAULT_STATION = {
+  name: "경상남도 거제시 장평동",
+  nx: 91,
+  ny: 69,
+};
 
-const GRID_URL = "kma_grid_light.json";
-
-let gridPromise = null;
-let gridCache = null;
-
-function loadGrid() {
-  if (gridCache) {
-    return Promise.resolve(gridCache);
-  }
-
-  if (!gridPromise) {
-    gridPromise = fetch(GRID_URL)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        gridCache = data;
-        return data;
-      })
-      .catch((err) => {
-        gridPromise = null;
-        throw err;
-      });
-  }
-
-  return gridPromise;
-}
-
-function findNearest(grid, lat, lon) {
+function findNearest(lat, lon) {
   const latCos = Math.cos((lat * Math.PI) / 180);
   let best = null;
   let bestDist = Infinity;
 
-  for (const g of grid) {
+  for (const g of kmaGrid) {
     const dLat = g.lat - lat;
     const dLon = (g.lon - lon) * latCos;
     const d = dLat * dLat + dLon * dLon;
@@ -167,8 +141,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lastChecked, setLastChecked] = useState(null);
-  const [grid, setGrid] = useState(null);
-  const [station, setStation] = useState(null);
+  const [station, setStation] = useState(DEFAULT_STATION);
   const [locStatus, setLocStatus] = useState("locating");
 
   const coordsRef = useRef(null);
@@ -177,14 +150,16 @@ function App() {
   const abortRef = useRef(null);
 
   const loadWeather = useCallback(async () => {
-    if (!station) {
-      return;
-    }
-
     // 이전에 진행 중이던 요청이 있으면 취소
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
+
+    let timedOut = false;
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 20000);
 
     try {
       setError("");
@@ -215,52 +190,32 @@ function App() {
 
     } catch (err) {
       if (err.name === "AbortError") {
+        if (timedOut) {
+          setError("응답 시간 초과. 잠시 후 다시 시도해 주세요.");
+        }
         return; // 취소된 요청은 에러로 취급하지 않음
       }
       console.error(err);
       setError(err.message || "데이터를 가져오지 못했습니다.");
     } finally {
+      clearTimeout(timeout);
       setLoading(false);
     }
   }, [station]);
 
-  // 최초 접속 즉시 조회
+  // 최초 접속 즉시 조회 (위치/격자와 무관하게 기본 지점부터 표시)
   useEffect(() => {
     loadWeather();
   }, [loadWeather]);
 
-  // 관측 지점 격자 데이터 로드
+  // 위치 권한 확인 → 성공 시 가까운 관측 지점으로 전환
   useEffect(() => {
-    let cancelled = false;
-
-    loadGrid()
-      .then((g) => {
-        if (!cancelled) return;
-        setGrid(g);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setError("관측 지점 정보를 불러오지 못했습니다.");
-        setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // 위치 권한 확인 → 가장 가까운 관측 지점으로 전환
-  useEffect(() => {
-    if (!grid) {
-      return;
-    }
-
     let cancelled = false;
 
     const apply = (point, status) => {
       if (cancelled) return;
 
-      setStation(findNearest(grid, point.lat, point.lon));
+      setStation(findNearest(point.lat, point.lon));
       setLocStatus(status);
     };
 
@@ -268,8 +223,6 @@ function App() {
       apply(coordsRef.current, "located");
       return;
     }
-
-    apply(FALLBACK_POINT, "locating");
 
     if (!("geolocation" in navigator)) {
       setLocStatus("denied");
@@ -292,7 +245,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [grid]);
+  }, []);
 
   // 1분마다 갱신
   useEffect(() => {
