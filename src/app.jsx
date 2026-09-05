@@ -273,7 +273,7 @@ function App() {
               {latest?.station_addr ? (
                 <>
                   <span className="station-name">
-                    {latest.station_name} 관측
+                    관측 위치: {latest.station_name}
                   </span>
                   <span className="station-addr">
                     {latest.station_addr}
