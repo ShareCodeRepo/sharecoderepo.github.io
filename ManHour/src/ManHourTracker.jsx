@@ -111,6 +111,7 @@ const LANGS = {
     ],
     title: "공수 관리",
     subtitle: "일당 · 근무시간 · 휴무를 한눈에",
+    language: "언어",
     saving: "저장 중",
     saved: "자동 저장됨",
     saveError: "자동 저장 실패 · JSON으로 내보내 두세요",
@@ -211,6 +212,7 @@ const LANGS = {
     ],
     title: "ManHour Tracker",
     subtitle: "Daily wage · work hours · days off at a glance",
+    language: "Language",
     saving: "Saving",
     saved: "Saved automatically",
     saveError: "Auto-save failed · export a JSON backup",
@@ -302,7 +304,113 @@ const LANGS = {
     summaryMh: "Man-days",
     mhOffShort: "Off",
   },
+  uz: {
+    name: "O'zbekcha",
+    weekdays: ["Yak", "Du", "Se", "Cho", "Pa", "Ju", "Sha"],
+    months: [
+      "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+      "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr",
+    ],
+    title: "Ish kuni hisobi",
+    subtitle: "Kunlik maosh · ish vaqti · dam olish kuni",
+    language: "Til",
+    saving: "Saqlanmoqda",
+    saved: "Avtomatik saqlandi",
+    saveError: "Avtomatik saqlash amalga oshmadi · JSON zaxira nusxasini yuklab oling",
+    calendar: "Taqvim",
+    list: "Ro'yxat",
+    prevMonth: "Oldingi oy",
+    nextMonth: "Keyingi oy",
+    today: "Bugun",
+    settings: "Sozlamalar",
+    exportJson: "Eksport (JSON)",
+    importJson: "Import (JSON)",
+    exportCsv: "Eksport (CSV)",
+    addEntry: "Ish kunini qo'shish",
+    registerManHour: "Ish kunini ro'yxatga olish",
+    work: "Ish",
+    off: "Dam olish",
+    paidOff: "Pullik ta'til",
+    unpaidOff: "Pulliksiz ta'til",
+    daily: "Kunlik",
+    hourly: "Soatlik",
+    paid: "Pullik",
+    unpaid: "Pulliksiz",
+    date: "Sana",
+    memo: "Izoh (ixtiyoriy)",
+    memoPlaceholder: "Masalan: qurilish ishlari",
+    cancel: "Bekor qilish",
+    save: "Qo'shish",
+    saveSettings: "Sozlamalarni saqlash",
+    saveEdit: "O'zgarishlarni saqlash",
+    delete: "O'chirish",
+    edit: "Tahrirlash",
+    emptyDay: "Yozuv yo'q",
+    noRecords: "Bu oyda yozuv yo'q. Kunni bosib qo'shing.",
+    normalAmount: "Oddiy",
+    otAmount: "Qo'shimcha ish",
+    bonus: "Bonus",
+    gross: "Yalpi",
+    net: "Sof",
+    taxNote: "soliq hisobga olingan",
+    summary: {
+      workDays: "Ish kunlari",
+      offDays: "Dam olish kunlari",
+      hours: "Soatlar",
+      paid: "Yalpi (soliqsiz)",
+      net: "Sof",
+    },
+    daySummary: "Shu kun",
+    statsEmpty: "Bu oyda yozuv yo'q",
+    settingsTitle: "Maosh sozlamalari",
+    dataSection: "Ma'lumotlar boshqaruvi",
+    baseModeLabel: "Ish turi",
+    calcModeLabel: "Hisoblash usuli",
+    dailyWageLabel: "Asosiy kunlik maosh (KRW)",
+    hourlyWageLabel: "Asosiy soatlik maosh (KRW)",
+    stdHoursLabel: "Ish vaqti (soat/kun)",
+    otMultLabel: "Qo'shimcha ish koeffitsienti",
+    taxRateLabel: "Soliq stavkasi (%)",
+    showNetLabel: "Xulosada sof summani ko'rsatish",
+    workdaysLegend: "17:00 gacha",
+    offLegend: "Dam olish",
+    otLegend: "1 ish kuni (OT/Shan/Yak)",
+    start: "Boshlash",
+    end: "Tugash",
+    break: "Tanaffus (daq)",
+    otHours: "Qo'shimcha soat",
+    otExt: "Qo'shimcha ish",
+    otDirect: "Qo'lda kiritish",
+    otAutoHint: "Qo'shimcha ish",
+    bonusLabel: "Bonus (KRW)",
+    rateDaily: "Kunlik maosh (KRW)",
+    rateHourly: "Soatlik maosh (KRW)",
+    paidValue: "Pullik ta'til summasi (KRW)",
+    hoursLabel: "Ish vaqti",
+    previewGross: "To'lov",
+    previewNet: "Sof to'lov",
+    perDay: "won",
+    emptyListNote: "Hozircha yozuvlar yo'q.",
+    loadErr: "Yuklangan fayl noto'g'ri.",
+    mh: "Ish kuni",
+    mhAuto: "Avtomatik (17:00 gacha)",
+    mhManual: "Qo'lda kiritish",
+    mhHint: "Ish kuni 0.88 · OT/Shan/Yak 1.0 · 17:00 dan oldin ketsa qo'lda kiriting",
+    mhManualHint: "To'liq bo'lmagan kun uchun ish kunini qo'lda kiriting (mas. 0.5)",
+    mhHolidayWork: "Bayram kuni ishlagan",
+    mhHolidayWorkHint: "Bayram kuni ishlash → ish kunida ham 1.0 hisoblanadi",
+    mhValueLabel: "Ish kuni",
+    mhUnit: "kishi",
+    summaryMh: "Ish kuni",
+    mhOffShort: "Dam",
+  },
 };
+
+function monthTitle(lang, ym) {
+  if (lang === "ko") return `${yearOf(ym)}년 ${monOf(ym)}월`;
+  const mon = LANGS[lang].months[monOf(ym) - 1];
+  return `${mon} ${yearOf(ym)}`;
+}
 
 // ---------- 계산 ----------
 
@@ -445,6 +553,7 @@ export default function ManHourTracker() {
 
   const [showSettings, setShowSettings] = useState(false);
   const [settingsDraft, setSettingsDraft] = useState(defaultSettings());
+  const [langDraft, setLangDraft] = useState("ko");
 
   const jsonInputRef = useRef(null);
 
@@ -746,6 +855,7 @@ export default function ManHourTracker() {
 
   function openSettings() {
     setSettingsDraft({ ...settings });
+    setLangDraft(lang);
     setShowSettings(true);
   }
 
@@ -760,6 +870,9 @@ export default function ManHourTracker() {
       otMult: clampNum(settingsDraft.otMult) || 1,
       taxRate: clampNum(settingsDraft.taxRate),
     });
+    if (LANGS[langDraft]) {
+      setLang(langDraft);
+    }
     setShowSettings(false);
   }
 
@@ -1591,7 +1704,7 @@ export default function ManHourTracker() {
             <ChevronLeft size={18} />
           </button>
           <span className="mh-month-title">
-            {yearOf(ym)}년 {monOf(ym)}월
+            {monthTitle(lang, ym)}
           </span>
           <button className="mh-icon-btn" onClick={() => setYm(nextMonth(ym, 1))} title={t.nextMonth}>
             <ChevronRight size={18} />
@@ -2139,6 +2252,22 @@ export default function ManHourTracker() {
               >
                 <X size={18} />
               </button>
+            </div>
+
+            <div className="mh-field">
+              <label>{t.language}</label>
+              <div className="mh-seg">
+                {Object.keys(LANGS).map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    className={langDraft === code ? "active" : ""}
+                    onClick={() => setLangDraft(code)}
+                  >
+                    {LANGS[code].name}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="mh-field">
