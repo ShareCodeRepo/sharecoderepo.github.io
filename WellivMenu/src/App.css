@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+  background: #f5f6f8;
+  color: #1a1a1a;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 100vh;
+}
+
+.app__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.app__header h1 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.app__locale {
+  display: flex;
+  gap: 4px;
+}
+
+.app__locale-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.app__locale-btn.is-active {
+  background: #1a73e8;
+  color: #fff;
+  border-color: #1a73e8;
+}
+
+.app__status {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+.app__days {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.app__day-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app__day-btn.is-active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+.meal-tabs {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.meal-tabs__list {
+  display: flex;
+}
+
+.meal-tabs__tab {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  background: #f0f1f3;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #888;
+}
+
+.meal-tabs__tab.is-active {
+  background: #fff;
+  color: #1a1a1a;
+  border-bottom: 2px solid #1a73e8;
+}
+
+.meal-tabs__panel {
+  padding: 16px;
+  min-height: 120px;
+}
+
+.meal-tabs__group {
+  margin-bottom: 16px;
+}
+
+.meal-tabs__group:last-child {
+  margin-bottom: 0;
+}
+
+.meal-tabs__group-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a73e8;
+  margin: 0 0 4px;
+}
+
+.meal-tabs__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meal-tabs__items li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.95rem;
+}
+
+.meal-tabs__items li:last-child {
+  border-bottom: none;
+}
+
+.meal-tabs__empty {
+  color: #999;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.app__updated {
+  text-align: center;
+  color: #999;
+  font-size: 0.75rem;
+  margin-top: 12px;
+}
