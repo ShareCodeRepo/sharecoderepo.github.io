@@ -14,6 +14,8 @@ export const strings = {
     noData: "등록된 메뉴가 없어요.",
     today: "오늘",
     updatedAt: "업데이트",
+    themeLight: "라이트 모드로 전환",
+    themeDark: "다크 모드로 전환",
   },
   en: {
     appTitle: "Welliv Meal Menu",
@@ -26,6 +28,8 @@ export const strings = {
     noData: "No menu registered.",
     today: "Today",
     updatedAt: "Updated",
+    themeLight: "Switch to light mode",
+    themeDark: "Switch to dark mode",
   },
   uz: {
     appTitle: "Welliv taom menyusi",
@@ -38,6 +42,8 @@ export const strings = {
     noData: "Menyu topilmadi.",
     today: "Bugun",
     updatedAt: "Yangilangan",
+    themeLight: "Yorug' rejimga o'tish",
+    themeDark: "Tungi rejimga o'tish",
   },
 };
 

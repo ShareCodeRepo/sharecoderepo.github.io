@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MealTabs from "./components/MealTabs.jsx";
+import ThemeToggle from "./components/ThemeToggle.jsx";
 import { LOCALES, t } from "./i18n/strings.js";
 import "./App.css";
 
@@ -7,31 +8,65 @@ import "./App.css";
 const MENU_API =
   "https://welliv-menu-app.excellwork.workers.dev/api/menu";
 
+const THEME_KEY = "welliv-menu-theme";
+
+function getInitialTheme() {
+  const applied = document.documentElement.dataset.theme;
+  if (applied === "light" || applied === "dark") return applied;
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === "light" || stored === "dark") return stored;
+  } catch {
+    // localStorage 접근 불가 시 시스템 설정 사용
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
 export default function App() {
   const [locale, setLocale] = useState("ko");
+  const [theme, setTheme] = useState(getInitialTheme);
   const [days, setDays] = useState(null); // 3일치 [{date, meals}]
   const [activeDayIdx, setActiveDayIdx] = useState(0);
   const [status, setStatus] = useState("loading"); // loading | ready | error
   const [updatedAt, setUpdatedAt] = useState(null);
-
-  async function load() {
-    setStatus("loading");
-    try {
-      const res = await fetch(MENU_API);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setDays(data.days ?? []);
-      setUpdatedAt(data.updatedAt ?? null);
-      setStatus("ready");
-    } catch (err) {
-      console.error(err);
-      setStatus("error");
-    }
-  }
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // 저장 실패는 무시
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setStatus("loading");
+      try {
+        const res = await fetch(`${MENU_API}?lang=${locale}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (cancelled) return;
+        setDays(data.days ?? []);
+        setUpdatedAt(data.updatedAt ?? null);
+        setStatus("ready");
+      } catch (err) {
+        if (cancelled) return;
+        console.error(err);
+        setStatus("error");
+      }
+    }
+
     load();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [locale, reloadKey]);
 
   const activeDay = days?.[activeDayIdx];
 
@@ -39,16 +74,25 @@ export default function App() {
     <div className="app">
       <header className="app__header">
         <h1>{t(locale, "appTitle")}</h1>
-        <div className="app__locale">
-          {LOCALES.map((loc) => (
-            <button
-              key={loc}
-              className={`app__locale-btn${locale === loc ? " is-active" : ""}`}
-              onClick={() => setLocale(loc)}
-            >
-              {loc.toUpperCase()}
-            </button>
-          ))}
+        <div className="app__controls">
+          <div className="app__locale">
+            {LOCALES.map((loc) => (
+              <button
+                key={loc}
+                className={`app__locale-btn${locale === loc ? " is-active" : ""}`}
+                onClick={() => setLocale(loc)}
+              >
+                {loc.toUpperCase()}
+              </button>
+            ))}
+          </div>
+          <ThemeToggle
+            theme={theme}
+            locale={locale}
+            onToggle={() =>
+              setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+            }
+          />
         </div>
       </header>
 
@@ -57,7 +101,9 @@ export default function App() {
       {status === "error" && (
         <div className="app__status">
           <p>{t(locale, "error")}</p>
-          <button onClick={load}>{t(locale, "retry")}</button>
+          <button onClick={() => setReloadKey((k) => k + 1)}>
+            {t(locale, "retry")}
+          </button>
         </div>
       )}
 
