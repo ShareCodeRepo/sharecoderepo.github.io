@@ -4,7 +4,7 @@ export const LOCALES = ["ko", "en", "uz"];
 
 export const strings = {
   ko: {
-    appTitle: "웰리브 식단표",
+    appTitle: "2026 웰리브 식단표",
     breakfast: "조식",
     lunch: "중식",
     dinner: "석식",
@@ -18,7 +18,7 @@ export const strings = {
     themeDark: "다크 모드로 전환",
   },
   en: {
-    appTitle: "Welliv Meal Menu",
+    appTitle: "2026 Welliv Meal Menu",
     breakfast: "Breakfast",
     lunch: "Lunch",
     dinner: "Dinner",
@@ -32,7 +32,7 @@ export const strings = {
     themeDark: "Switch to dark mode",
   },
   uz: {
-    appTitle: "Welliv taom menyusi",
+    appTitle: "2026 Welliv taom menyusi",
     breakfast: "Nonushta",
     lunch: "Tushlik",
     dinner: "Kechki ovqat",

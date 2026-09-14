@@ -24,6 +24,28 @@ function getInitialTheme() {
     : "light";
 }
 
+// "09/14(월)" 같은 dateLabel을 { date: "09/14", weekday: "월" }로 분리한다.
+// 요일은 로케일과 무관하게 항상 한국어로 표시한다.
+const KO_WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
+
+function dayParts(day) {
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day.date ?? "");
+  if (iso) {
+    const [, y, m, d] = iso;
+    const wd = new Date(
+      Date.UTC(Number(y), Number(m) - 1, Number(d))
+    ).getUTCDay();
+    return { date: `${m}/${d}`, weekday: KO_WEEKDAY[wd] };
+  }
+
+  // date.date가 ISO가 아니면 dateLabel에서 분리
+  const label = (day.dateLabel ?? "").trim();
+  const m2 = /^(\d{1,2}\/\d{1,2})\s*\(([^()]+)\)$/.exec(label);
+  if (m2) return { date: m2[1], weekday: m2[2].trim() };
+
+  return { date: label || day.date || "", weekday: "" };
+}
+
 export default function App() {
   const [locale, setLocale] = useState("ko");
   const [theme, setTheme] = useState(getInitialTheme);
@@ -110,17 +132,23 @@ export default function App() {
       {status === "ready" && days && days.length > 0 && (
         <>
           <div className="app__days" role="tablist">
-            {days.map((day, idx) => (
-              <button
-                key={day.date}
-                role="tab"
-                aria-selected={activeDayIdx === idx}
-                className={`app__day-btn${activeDayIdx === idx ? " is-active" : ""}`}
-                onClick={() => setActiveDayIdx(idx)}
-              >
-                {day.date}
-              </button>
-            ))}
+            {days.map((day, idx) => {
+              const { date, weekday } = dayParts(day);
+              return (
+                <button
+                  key={day.date}
+                  role="tab"
+                  aria-selected={activeDayIdx === idx}
+                  className={`app__day-btn${activeDayIdx === idx ? " is-active" : ""}`}
+                  onClick={() => setActiveDayIdx(idx)}
+                >
+                  <span className="app__day-date">{date}</span>
+                  {weekday && (
+                    <span className="app__day-weekday">{weekday}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <MealTabs locale={locale} day={activeDay} />
