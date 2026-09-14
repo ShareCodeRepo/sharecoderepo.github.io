@@ -144,7 +144,7 @@ export default function App() {
                 >
                   <span className="app__day-date">{date}</span>
                   {weekday && (
-                    <span className="app__day-weekday">{weekday}</span>
+                    <span className="app__day-weekday">({weekday})</span>
                   )}
                 </button>
               );
