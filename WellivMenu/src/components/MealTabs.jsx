@@ -7,6 +7,14 @@ const MEAL_KEYS = [
   { id: "dinner", labelKey: "dinner" },
 ];
 
+// "메뉴명(125Kcal)" → "메뉴명 (125Kcal)" 처럼 괄호 앞에 공백을 넣어 가독성을 높인다.
+function formatItem(text) {
+  return String(text)
+    .replace(/\s*\(/g, " (")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 // day: { date, dateLabel, meals: { breakfast: Group[], lunch: Group[], dinner: Group[] } }
 // Group: { category: string|null, items: string[] }
 export default function MealTabs({ locale, day }) {
@@ -41,7 +49,7 @@ export default function MealTabs({ locale, day }) {
               )}
               <ul className="meal-tabs__items">
                 {group.items.map((item, idx) => (
-                  <li key={idx}>{item}</li>
+                  <li key={idx}>{formatItem(item)}</li>
                 ))}
               </ul>
             </div>
