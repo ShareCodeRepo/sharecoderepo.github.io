@@ -68,27 +68,41 @@
 
 .app__days {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 4px 2px;
   overflow-x: auto;
 }
 
 .app__day-btn {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid var(--border);
-  background: var(--button-bg);
-  color: var(--button-text);
-  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 14px;
   font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   cursor: pointer;
   white-space: nowrap;
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.app__day-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .app__day-btn.is-active {
-  background: var(--day-active-bg);
+  background: var(--day-active-gradient);
   color: var(--day-active-text);
-  border-color: var(--day-active-bg);
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(26, 115, 232, 0.35);
+  transform: translateY(-1px);
 }
 
 .meal-tabs {
@@ -111,32 +125,38 @@
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .meal-tabs__tab.is-active {
-  background: var(--surface);
-  color: var(--text);
-  border-bottom: 2px solid var(--primary);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 700;
 }
 
 .meal-tabs__panel {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
   min-height: 120px;
 }
 
 .meal-tabs__group {
-  margin-bottom: 16px;
-}
-
-.meal-tabs__group:last-child {
-  margin-bottom: 0;
+  background: var(--surface-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .meal-tabs__group-title {
-  font-size: 0.85rem;
+  display: inline-block;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--primary);
-  margin: 0 0 4px;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 4px;
+  margin: 0 0 8px;
 }
 
 .meal-tabs__items {
@@ -147,7 +167,7 @@
 
 .meal-tabs__items li {
   padding: 8px 0;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--divider);
   font-size: 0.95rem;
 }
 

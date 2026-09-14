@@ -11,8 +11,11 @@
   --border-subtle: #f0f0f0;
   --primary: #1a73e8;
   --on-primary: #ffffff;
-  --day-active-bg: #1a1a1a;
+  --primary-tint: #e7f0fe;
+  --divider: #e4e6ea;
+  --day-active-bg: #1a73e8;
   --day-active-text: #ffffff;
+  --day-active-gradient: linear-gradient(135deg, #1a73e8, #4b8ef7);
   --button-bg: #ffffff;
   --button-text: #1a1a1a;
   --shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
@@ -31,8 +34,11 @@
   --border-subtle: #2e303a;
   --primary: #6ea8fe;
   --on-primary: #0b1020;
-  --day-active-bg: #f3f4f6;
-  --day-active-text: #16171d;
+  --primary-tint: rgba(110, 168, 254, 0.16);
+  --divider: #32343d;
+  --day-active-bg: #2f6fed;
+  --day-active-text: #ffffff;
+  --day-active-gradient: linear-gradient(135deg, #2f6fed, #5b9bff);
   --button-bg: #23252e;
   --button-text: #f3f4f6;
   --shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
