@@ -92,6 +92,10 @@ export default function App() {
 
   const activeDay = days?.[activeDayIdx];
 
+  // 데이터가 없거나 에러일 때만 제목 클릭 새로고침을 허용한다.
+  const canRefresh =
+    status === "error" || (status === "ready" && (!days || days.length === 0));
+
   return (
     <div className="app">
       <header className="app__header">
@@ -100,8 +104,9 @@ export default function App() {
             type="button"
             className="app__title-btn"
             onClick={() => setReloadKey((k) => k + 1)}
-            title={t(locale, "refresh")}
-            aria-label={t(locale, "refresh")}
+            disabled={!canRefresh}
+            title={canRefresh ? t(locale, "refresh") : undefined}
+            aria-label={canRefresh ? t(locale, "refresh") : undefined}
           >
             {t(locale, "appTitle")}
           </button>
