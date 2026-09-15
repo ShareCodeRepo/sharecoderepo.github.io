@@ -761,7 +761,7 @@ export default function ManHourTracker() {
 
   function commitSettings(e) {
     e.preventDefault();
-    setSettings({
+    const nextSettings = {
       ...settingsDraft,
       baseMode: settingsDraft.baseMode,
       dailyWage: clampNum(settingsDraft.dailyWage),
@@ -769,7 +769,33 @@ export default function ManHourTracker() {
       stdHours: clampNum(settingsDraft.stdHours) || 8,
       otMult: clampNum(settingsDraft.otMult) || 1,
       taxRate: clampNum(settingsDraft.taxRate),
-    });
+    };
+
+    // 기본 요율이 바뀌면 기존 기록도 함께 갱신한다.
+    // 단, 값이 기존 기본 요율과 같은 기록(즉 기본값을 그대로 쓰던 기록)만 바꾸고
+    // 외부에서 개별 지정된 요율은 보존한다.
+    const prevDaily = clampNum(settings.dailyWage);
+    const prevHourly = clampNum(settings.hourlyWage);
+    const dailyChanged = nextSettings.dailyWage !== prevDaily;
+    const hourlyChanged = nextSettings.hourlyWage !== prevHourly;
+
+    if (dailyChanged || hourlyChanged) {
+      setRecords((prev) =>
+        prev.map((r) => {
+          if (r.kind !== "work") return r;
+          const patch = {};
+          if (dailyChanged && clampNum(r.dailyRate) === prevDaily) {
+            patch.dailyRate = nextSettings.dailyWage;
+          }
+          if (hourlyChanged && clampNum(r.hourlyRate) === prevHourly) {
+            patch.hourlyRate = nextSettings.hourlyWage;
+          }
+          return Object.keys(patch).length ? { ...r, ...patch } : r;
+        })
+      );
+    }
+
+    setSettings(nextSettings);
     if (LANGS[langDraft]) {
       setLang(langDraft);
     }
