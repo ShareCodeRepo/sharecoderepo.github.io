@@ -95,7 +95,17 @@ export default function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <h1>{t(locale, "appTitle")}</h1>
+        <h1>
+          <button
+            type="button"
+            className="app__title-btn"
+            onClick={() => setReloadKey((k) => k + 1)}
+            title={t(locale, "refresh")}
+            aria-label={t(locale, "refresh")}
+          >
+            {t(locale, "appTitle")}
+          </button>
+        </h1>
         <div className="app__controls">
           <div className="app__locale">
             {LOCALES.map((loc) => (

@@ -20,6 +20,23 @@
   margin: 0;
 }
 
+.app__title-btn {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.app__title-btn:hover,
+.app__title-btn:focus-visible {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
 .app__controls {
   display: flex;
   align-items: center;
