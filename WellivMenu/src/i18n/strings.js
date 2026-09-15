@@ -18,7 +18,7 @@ export const strings = {
     themeDark: "다크 모드로 전환",
   },
   en: {
-    appTitle: "2026 Welliv Meal Menu",
+    appTitle: "2026 Welliv Menu",
     breakfast: "Breakfast",
     lunch: "Lunch",
     dinner: "Dinner",
@@ -32,7 +32,7 @@ export const strings = {
     themeDark: "Switch to dark mode",
   },
   uz: {
-    appTitle: "2026 Welliv taom menyusi",
+    appTitle: "2026 Welliv menyu",
     breakfast: "Nonushta",
     lunch: "Tushlik",
     dinner: "Kechki ovqat",
