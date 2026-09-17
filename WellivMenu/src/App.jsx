@@ -138,9 +138,17 @@ export default function App() {
       {status === "error" && (
         <div className="app__status">
           <p>{t(locale, "error")}</p>
+          <p className="app__schedule">{t(locale, "updateSchedule")}</p>
           <button onClick={() => setReloadKey((k) => k + 1)}>
             {t(locale, "retry")}
           </button>
+        </div>
+      )}
+
+      {status === "ready" && (!days || days.length === 0) && (
+        <div className="app__status">
+          <p>{t(locale, "notUpdated")}</p>
+          <p className="app__schedule">{t(locale, "updateSchedule")}</p>
         </div>
       )}
 
@@ -171,6 +179,8 @@ export default function App() {
           {updatedAt && (
             <p className="app__updated">
               {t(locale, "updatedAt")}: {new Date(updatedAt).toLocaleString(locale)}
+              {" · "}
+              {t(locale, "updateSchedule")}
             </p>
           )}
         </>

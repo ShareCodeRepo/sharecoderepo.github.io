@@ -90,6 +90,12 @@
   color: var(--text-muted);
 }
 
+.app__schedule {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  margin-top: 6px;
+}
+
 .app__days {
   display: flex;
   gap: 10px;
