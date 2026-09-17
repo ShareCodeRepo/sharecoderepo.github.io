@@ -1,6 +1,6 @@
 # 웰리브 식단표 앱 — 작업 정리 / 인수인계
 
-최종 갱신: 2026-09-15 (KST)
+최종 갱신: 2026-09-18 (KST)
 대상: `welliv-menu-app` (워커+프론트) + `sharecoderepo.github.io/WellivMenu` (허브 서브앱)
 
 이 문서 하나로 아키텍처·배포·유지보수·함정을 이해하고 이어서 수정할 수 있게 정리한다.
@@ -66,7 +66,7 @@ Cloudflare Worker (worker/index.js)
    │     │       └─ worker/parse.js 로 3일치 파싱
    │     └─ 요청 로케일로 변환 후 응답 (변환은 캐시하지 않음)
    └─ 그 외 → ASSETS(dist, SPA fallback)
-Cron (30 20 * * * = KST 05:30) → scheduled() → warmCache(force) 로 캐시 갱신
+Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmCache(force) 로 캐시 갱신
 ```
 
 ---
@@ -134,10 +134,10 @@ Cron (30 20 * * * = KST 05:30) → scheduled() → warmCache(force) 로 캐시 �
 - 한국어 띄어쓰기: `ko-space.js`의 어토믹 토큰 사전 + 최장일치. `/`와 `+`는 공백 삽입, 괄호 안쪽 공백 제거. **완성형 합성어를 토큰으로 넣으면 분절이 막히므로 금지.**
 
 ### 4-5. 캐시 예열 (Cron)
-- `wrangler.toml`: `[triggers] crons = ["30 20 * * *"]` → **UTC 20:30 = KST 익일 05:30**.
+- `wrangler.toml`: `[triggers] crons = ["0 15 * * *", "30 20 * * *"]` → **UTC 15:00 = KST 자정 00:00**, **UTC 20:30 = KST 새벽 05:30**.
 - `warmCache(env, { force })`:
   - 기본(force=false): 캐시 없음/불완전할 때만 크롤.
-  - cron은 **force=true** → 캐시가 있어도 다시 크롤해 **새벽 갱신을 반영**.
+  - cron은 **force=true** → 캐시가 있어도 다시 크롤해 **자정/새벽 갱신을 반영**.
 
 ### 4-6. 방어 로직 (중요)
 - 파싱 전 테이블 렌더 대기 + 빈 결과 재시도.
@@ -169,6 +169,12 @@ Cron (30 20 * * * = KST 05:30) → scheduled() → warmCache(force) 로 캐시 �
 - 제목 클릭 시 재요청. 단 **데이터가 정상 로드된 상태면 비활성**(`canRefresh`), 없음/에러일 때만 클릭 가능.
 - 허브: `2026 웰리브 식단표`, 영어: `2026 Welliv Menu`, 우즈벡: `2026 Welliv menyu` (en/uz만 축약, wrap 방지).
 - 헤더는 `flex-wrap`, `h1`은 `white-space: nowrap`.
+
+### 5-5. 갱신 안내 메시지
+- 원문 캐시가 **KST 날짜 단위**라, 같은 날 안에서는 사이트가 식단을 수정해도 반영되지 않는다. 사용자 오해를 줄이기 위해 **갱신 시각을 안내**한다.
+- i18n 키: `notUpdated`(미갱신 안내), `updateSchedule`(`매일 자정 12:00, 새벽 05:30 (KST) 갱신`).
+- 표시 위치(`App.jsx`): ① 에러 상태, ② `ready`지만 `days`가 빈 상태, ③ 정상 상태의 업데이트 시각 옆.
+- Worker 자체 프론트(`welliv-menu-app/src`)와 허브(`WellivMenu/src`) **양쪽 동일 적용**.
 
 ---
 
@@ -203,9 +209,10 @@ npx wrangler kv key put --binding MENU_KV --remote "menu:raw:<YYYY-MM-DD>" --pat
 2. **Browser Run 429 rate limit** → 언어별로 따로 크롤하지 않고 **브라우저 1세션에서 ko/en 동시 크롤**.
 3. **EUC-KR**: 서버가 `Content-Type: ...charset=euc-kr` 응답(meta의 utf-8 선언보다 HTTP 헤더 우선) → Playwright 정상 디코딩.
 4. **빈 `kor` 캐시 사고**: 특정 날짜 `menu:raw`에 `kor:[]`가 캐시되어 한국어만 안 나옴 → 파싱 전 대기 + 빈 결과 재시도 + 정상일 때만 캐시 + auto-heal 로 해결.
-5. **날짜 경계**: 자정 넘으면 캐시 키가 바뀌어 첫 접속자가 새로 크롤. 새벽 갱신은 05:30 cron(force)이 반영.
+5. **날짜 경계**: 자정 넘으면 캐시 키가 바뀌어 첫 접속자가 새로 크롤. 자정 00:00 / 새벽 05:30 cron(force)이 갱신을 반영.
 6. **버전 관리 제거**: 번역을 캐시하지 않으므로 `UZ_DICT_VERSION` 같은 수동 버전 불필요(과거에 content-hash 방식 → 이후 raw 캐시 + 요청시 변환으로 단순화).
 7. **허브 서브패스**: `base: "./"` (GitHub Pages 하위경로), API는 절대주소+CORS.
+8. **하루 내 갱신 안 됨(2026-09-18 대응)**: 원문을 KST 날짜 키로 캐시하므로 같은 날 사이트가 식단을 바꿔도 재크롤하지 않아 사용자가 "갱신이 안 된다"고 느낌. 대응으로 cron을 **KST 자정 00:00 + 새벽 05:30 강제 갱신**으로 늘리고, 프론트에 **갱신 시각 안내 메시지**를 추가. 근본 해결(TTL 단축/stale-while-revalidate)은 미적용.
 
 ---
 
@@ -240,7 +247,7 @@ git add -A && git commit -m "..." && git push origin main
 | assets | `directory=./dist`, `binding=ASSETS`, SPA fallback, `run_worker_first=["/api/*"]` |
 | KV | `MENU_KV` id `caad6e3bb87b49128fd2e4e523278c32` |
 | browser | `MENU_BROWSER` |
-| triggers | `crons = ["30 20 * * *"]` |
+| triggers | `crons = ["0 15 * * *", "30 20 * * *"]` (KST 00:00, 05:30) |
 | 계정 | `excellwork@gmail.com` (account id `d31cd88d4ef896d3804992fdb2a1498b`) |
 
 ---
@@ -248,6 +255,7 @@ git add -A && git commit -m "..." && git push origin main
 ## 9. 알려진 이슈 / TODO
 
 - **실패 시 폴백 미구현**: 재시도까지 실패하면 빈 결과 대신 ① 직전 정상 스냅샷(`menu:lastgood`) stale 응답 → ② 스냅샷도 없으면 `503 + Retry-After`로 떨어뜨리자는 안이 논의됨(미적용).
+- **하루 내 신선도**: 날짜 키 캐시라 같은 날 사이트 수정은 cron(00:00/05:30) 전까지 반영 안 됨. TTL 단축/stale-while-revalidate/수동 강제 새로고침(`?refresh=1`)은 미적용(안내 메시지만 추가).
 - **우즈벡어 번역 품질**: `uz-dict.js`의 `// ── 보조 번역 (검토 필요) ──` 이하 항목은 사람 검수 필요.
 - **한국어 띄어쓰기**: 휴리스틱이라 일부 경계(예: `제육 불고기`, `파 계란국`, `초간장`)는 토큰 조정 필요.
 - **워커 소스 원격 없음**: `welliv-menu-app`은 로컬 git만. 필요 시 새 원격을 만들어 push.
@@ -258,6 +266,7 @@ git add -A && git commit -m "..." && git push origin main
 
 ## 10. 최근 커밋 (워커 repo, 최신순)
 
+- `a44d513` 하루 갱신 안내 메시지 + cron KST 00:00/05:30
 - `1d89370` 05:30 KST cron 강제 갱신
 - `2aa3581` 데이터 있을 때 타이틀 새로고침 비활성
 - `e520494` 타이틀 클릭 새로고침 + cron 05:30
@@ -273,4 +282,4 @@ git add -A && git commit -m "..." && git push origin main
 - `c49afc5`/`19e4aac`/`2c3e869`/`58fe6cb`/`8172749` 우즈벡 사전·번역
 - `82dc71b` 로컬 스냅샷(lang 지원)
 
-허브 repo 최근: `cf0a024`(타이틀 새로고침 비활성), `4c16893`(타이틀 클릭+5:30), `b61dbae`(타이틀 축약), `528f10f`(타이틀 wrap 방지), `0b077b1`(날짜칩/요일), `a15a4fd`(날짜+타이틀), `e85ee5a`(괄호 공백), `59278a0`(날짜/그룹 스타일), `0adad45`(테마+언어 로딩).
+허브 repo 최근: `c5542fc`(웰리브 갱신 안내 메시지), `5d22961`(ManHour 기본 일당 전파), `cf0a024`(타이틀 새로고침 비활성), `4c16893`(타이틀 클릭+5:30), `b61dbae`(타이틀 축약), `528f10f`(타이틀 wrap 방지), `0b077b1`(날짜칩/요일), `a15a4fd`(날짜+타이틀), `e85ee5a`(괄호 공백), `59278a0`(날짜/그룹 스타일), `0adad45`(테마+언어 로딩).
