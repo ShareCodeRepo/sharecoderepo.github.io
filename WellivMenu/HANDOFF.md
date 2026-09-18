@@ -19,6 +19,7 @@
 ## 1. 저장소 / 경로
 
 ### 1-1. 워커+앱 저장소 (메인)
+
 - 경로: `C:\Users\Sapphire\Downloads\분석\ShareCodeRepo\welliv-menu-app`
 - git: **로컬 전용** (원격 없음, branch `master`). 커밋은 하되 push 안 함.
 - 구성:
@@ -34,6 +35,7 @@
   - `wrangler.toml`, `package.json`, `vite.config.js`
 
 ### 1-2. 허브 저장소 (GitHub Pages)
+
 - 경로: `C:\Users\Sapphire\Downloads\분석\ShareCodeRepo\sharecoderepo.github.io`
 - 원격: `https://github.com/ShareCodeRepo/sharecoderepo.github.io.git` (branch `main`) — push 함
 - 서브앱: `WellivMenu/`
@@ -44,17 +46,18 @@
   - API는 **절대주소** 호출: `https://welliv-menu-app.excellwork.workers.dev/api/menu?lang=<locale>`
 
 ### 1-3. 배포 위치
+
 | 위치 | URL | 비고 |
-|---|---|---|
-| Cloudflare Worker | https://welliv-menu-app.excellwork.workers.dev | API + 자체 정적자산 |
-| GitHub Pages | https://sharecoderepo.github.io/WellivMenu/ | 허브 리포 push 시 반영 |
-| Vercel | https://wellivmenu.vercel.app | 허브 빌드 산출물 서빙(리포 연동 시 자동) |
+| --- | --- | --- |
+| Cloudflare Worker | <https://welliv-menu-app.excellwork.workers.dev> | API + 자체 정적자산 |
+| GitHub Pages | <https://sharecoderepo.github.io/WellivMenu/> | 허브 리포 push 시 반영 |
+| Vercel | <https://wellivmenu.vercel.app> | 허브 빌드 산출물 서빙(리포 연동 시 자동) |
 
 ---
 
 ## 2. 아키텍처
 
-```
+```text
 [브라우저]
    ├─ 정적 프론트 (React 빌드): GitHub Pages / Vercel / (Worker 자체 자산)
    └─ GET /api/menu?lang=ko|en|uz  (절대주소, CORS)
@@ -80,6 +83,7 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
 - `uz`: 사이트 영어를 **우즈벡어로 변환**(항목명), **칼로리는 보존**
 
 응답:
+
 ```json
 {
   "lang": "ko",
@@ -98,6 +102,7 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
   "updatedAt": "2026-09-15T...Z"
 }
 ```
+
 - `days`는 3일치. `category`는 `null` 가능.
 - 실패 시 `502 { "error": "crawl_failed", "message": "..." }`.
 
@@ -106,17 +111,20 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
 ## 4. Worker 구현 상세 (`welliv-menu-app/worker`)
 
 ### 4-1. 라우팅 (`index.js`)
+
 - `/api/menu`: OPTIONS(204+CORS) / GET → `onRequestGet` / 그 외 405
 - 그 외 경로: `env.ASSETS.fetch(request)` (SPA fallback)
 - `scheduled()`: `ctx.waitUntil(warmCache(env, { force: true }))`
 
 ### 4-2. KV 캐시 (`menu.js`)
+
 - 키: `menu:raw:${YYYY-MM-DD(KST)}` 하나에 `{ kor, eng, updatedAt }` 저장.
 - **원문(ko/en)만 캐시**하고 언어 변환은 요청 시 수행 → **사전/카테고리 수정이 배포 즉시 반영**(번역 캐시 없음).
 - TTL 20시간.
 - 캐시가 없거나 `kor`/`eng` 중 하나라도 비면 재크롤(`isIncompleteRaw`). 정상일 때만 저장.
 
 ### 4-3. 크롤링/파싱
+
 - `WELLIV_URL = http://m.welliv.co.kr/mobile/mealmenu_list.jsp`
 - 언어는 쿼리파라미터: `?lang=kor` / `?lang=eng` (사이트가 kor/eng만 제공).
 - 한 브라우저 세션에서 **kor → eng 순서로 2회 goto** (Browser Run 429 rate limit 회피).
@@ -126,6 +134,7 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
 - 날짜 변환 `normalizeDate`: 페이지에 연도 없음 → 오늘(KST) 기준 ±200일 규칙으로 보정.
 
 ### 4-4. 언어 변환 (`translate.js` + dict)
+
 - `normalizeKey`: 괄호(칼로리/수량) 제거, `‘’` → `'`, 슬래시 공백 정리, 소문자화 → 매칭 안정화.
 - 우즈벡어: `UZ_PHRASES`(영어 표기 키 → 우즈벡어), `UZ_ALIASES`(사이트 변형/오탈자 → 정식 키).
   - 정확 매칭 → 슬래시/플러스 분해 매칭 → **미매칭은 영어 폴백**.
@@ -134,12 +143,14 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
 - 한국어 띄어쓰기: `ko-space.js`의 어토믹 토큰 사전 + 최장일치. `/`와 `+`는 공백 삽입, 괄호 안쪽 공백 제거. **완성형 합성어를 토큰으로 넣으면 분절이 막히므로 금지.**
 
 ### 4-5. 캐시 예열 (Cron)
+
 - `wrangler.toml`: `[triggers] crons = ["0 15 * * *", "30 20 * * *"]` → **UTC 15:00 = KST 자정 00:00**, **UTC 20:30 = KST 새벽 05:30**.
 - `warmCache(env, { force })`:
   - 기본(force=false): 캐시 없음/불완전할 때만 크롤.
   - cron은 **force=true** → 캐시가 있어도 다시 크롤해 **자정/새벽 갱신을 반영**.
 
 ### 4-6. 방어 로직 (중요)
+
 - 파싱 전 테이블 렌더 대기 + 빈 결과 재시도.
 - **양쪽 언어가 정상일 때만 캐시** → 빈 캐시로 하루 종일 특정 언어가 비는 사고 방지.
 - 불완전 캐시는 다음 요청에서 자동 재크롤(auto-heal).
@@ -154,23 +165,28 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
 - `App.css` / `index.css`: 테마 토큰(라이트/다크), 날짜칩, 대표메뉴 그룹 스타일.
 
 ### 5-1. 테마
+
 - `:root` / `:root[data-theme="dark"]` 토큰. `index.html`에 FOUC 방지 인라인 스크립트, `localStorage` 키 `welliv-menu-theme`.
 - 허브에만 `ThemeToggle.jsx` 있음(워커 프론트엔 없음).
 
 ### 5-2. 날짜 칩
+
 - 표시: `MM/DD` + **요일은 항상 한국어**(ISO `day.date`에서 계산, 로케일 무관) → `09/15 (화)` 한 줄.
 - 스타일: 카드형 pill, 활성=파란 그라데이션+흰 글씨+그림자.
 
 ### 5-3. 대표메뉴(그룹)
+
 - 그룹=서브카드(연한 배경+라운드), 카테고리 제목=**파란 글씨 + 2px 언더라인**(배경 없음).
 - 그룹 간격 > 항목 간격으로 위계.
 
 ### 5-4. 타이틀 새로고침 규칙
+
 - 제목 클릭 시 재요청. 단 **데이터가 정상 로드된 상태면 비활성**(`canRefresh`), 없음/에러일 때만 클릭 가능.
 - 허브: `2026 웰리브 식단표`, 영어: `2026 Welliv Menu`, 우즈벡: `2026 Welliv menyu` (en/uz만 축약, wrap 방지).
 - 헤더는 `flex-wrap`, `h1`은 `white-space: nowrap`.
 
 ### 5-5. 갱신 안내 메시지
+
 - 원문 캐시가 **KST 날짜 단위**라, 같은 날 안에서는 사이트가 식단을 수정해도 반영되지 않는다. 사용자 오해를 줄이기 위해 **갱신 시각을 안내**한다.
 - i18n 키: `notUpdated`(미갱신 안내), `updateSchedule`(`매일 자정 12:00, 새벽 05:30 (KST) 갱신`).
 - 표시 위치(`App.jsx`): ① 에러 상태, ② `ready`지만 `days`가 빈 상태, ③ 정상 상태의 업데이트 시각 옆.
@@ -181,22 +197,27 @@ Cron (0 15 * * * = KST 00:00, 30 20 * * * = KST 05:30) → scheduled() → warmC
 ## 6. 유지보수 방법
 
 ### 6-1. 우즈벡어 사전
+
 - 파일: `worker/uz-dict.js`의 `UZ_PHRASES`(영어 표기 키). 사이트는 우즈벡어 미지원이라 **영어 키** 사용.
 - 빠진 항목 확인: `npm run uz:report` → 출력된 키를 채워 넣고 배포. (번역 캐시 없음 → 배포 즉시 반영)
 - 칼로리는 자동 보존되므로 사전 값에 넣지 않는다.
 
 ### 6-2. 한국어 띄어쓰기
+
 - 파일: `worker/ko-space.js` `LEXICON`. **어토믹 토큰만 추가**. 완성형 합성어 금지.
 - 새 메뉴가 생기면 새로 등장한 토큰만 추가하면 대부분 자동 분절됨.
 
 ### 6-3. 영어 카테고리
+
 - 파일: `worker/en-dict.js` `EN_CATEGORY` (한글 카테고리 → 영어).
 
 ### 6-4. 캐시 수동 채우기 / 확인
+
 ```bash
 # 원문 캐시 수동 주입(정상 데이터 확보 시)
 npx wrangler kv key put --binding MENU_KV --remote "menu:raw:<YYYY-MM-DD>" --path <raw.json>
 ```
+
 - `raw.json` 형태: `{ "kor": days[], "eng": days[], "updatedAt": "..." }`
 - 참고: 원격 KV **읽기**(`kv key get --remote`)는 토큰 권한 문제로 401이 날 수 있음. 쓰기는 가능.
 
@@ -219,6 +240,7 @@ npx wrangler kv key put --binding MENU_KV --remote "menu:raw:<YYYY-MM-DD>" --pat
 ## 8. 명령어 / 배포
 
 ### 워커 저장소
+
 ```bash
 npm install
 npm run dev        # Vite(5173) + wrangler dev(8788)  ※ Browser Run 로컬은 --remote 필요할 수 있음
@@ -227,6 +249,7 @@ npm run deploy     # vite build && wrangler deploy  (Cloudflare 배포)
 ```
 
 ### 허브 저장소 (WellivMenu)
+
 ```bash
 # WellivMenu 디렉터리에서
 npm run deploy     # vite build + scripts/copy-welliv.mjs → WellivMenu/(assets,index.html)
@@ -234,12 +257,14 @@ git add -A && git commit -m "..." && git push origin main
 ```
 
 ### 로컬 테스트 보조(임시, 커밋 안 됨)
+
 - `C:\Users\Sapphire\AppData\Local\Temp\opencode\welliv-test\`
   - `linkedom` 기반 파서 테스트, `gen-raw.mjs`(라이브 페이지 → raw JSON 생성), `test-uz.mjs`(커버리지), `test-ko-space.mjs`.
 
 ### Cloudflare 설정(`wrangler.toml`)
+
 | 항목 | 값 |
-|---|---|
+| --- | --- |
 | name | `welliv-menu-app` |
 | main | `worker/index.js` |
 | compatibility_date | `2026-09-14` |

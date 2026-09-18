@@ -178,9 +178,12 @@ export default function App() {
 
           {updatedAt && (
             <p className="app__updated">
-              {t(locale, "updatedAt")}: {new Date(updatedAt).toLocaleString(locale)}
-              {" · "}
-              {t(locale, "updateSchedule")}
+              <span className="app__updated-line">
+                {t(locale, "updatedAt")}: {new Date(updatedAt).toLocaleString(locale)}
+              </span>
+              <span className="app__updated-line">
+                {t(locale, "updateSchedule")}
+              </span>
             </p>
           )}
         </>
