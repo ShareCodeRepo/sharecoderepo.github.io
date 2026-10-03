@@ -1531,6 +1531,11 @@ export default function ManHourTracker() {
           font-size: 16px;
         }
 
+        .mh-ot-row .mh-input {
+          height: 38px;
+          line-height: 20px;
+        }
+
         .mh-ot-row .mh-input:disabled {
           opacity: 0.55;
           cursor: not-allowed;
@@ -1608,6 +1613,8 @@ export default function ManHourTracker() {
         .mh-input-row .mh-settings-number-input,
         .mh-input-row .mh-money-input {
           font-size: 16px;
+          height: 38px;
+          line-height: 20px;
         }
 
         .mh-input-row .mh-money-input {
