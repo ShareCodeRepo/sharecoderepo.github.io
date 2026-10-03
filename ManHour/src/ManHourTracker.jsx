@@ -1531,6 +1531,11 @@ export default function ManHourTracker() {
           font-size: 16px;
         }
 
+        .mh-ot-row .mh-input:disabled {
+          opacity: 0.55;
+          cursor: not-allowed;
+        }
+
         .mh-seg {
           display: flex;
           border: 1px solid var(--border);
@@ -2107,6 +2112,7 @@ export default function ManHourTracker() {
                         min="0"
                         step="0.5"
                         value={form.otHours ?? 0}
+                        disabled={clampNum(form.otHours) <= 0}
                         onChange={(e) => {
                           const v = e.target.value;
                           setForm({
