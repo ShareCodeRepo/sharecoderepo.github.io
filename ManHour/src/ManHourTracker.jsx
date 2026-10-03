@@ -1839,8 +1839,13 @@ export default function ManHourTracker() {
           >
             <div className="mh-modal-title">
               {editingId ? t.saveEdit : t.registerManHour}
-              <button type="button" className="mh-edit-icon-btn" onClick={closeForm}>
-                <X size={16} />
+              <button
+                type="button"
+                className="mh-close-btn"
+                onClick={closeForm}
+                aria-label={t.cancel}
+              >
+                <X size={18} />
               </button>
             </div>
 
