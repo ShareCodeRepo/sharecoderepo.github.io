@@ -87,6 +87,14 @@ function manhourOf(rec) {
   return autoManhourOf(rec);
 }
 
+// 직접 입력 모드: 17:00 기준 0.88공수, 퇴근 시간 1시간당 0.12공수 조정
+function calcManualMh(rec) {
+  const endMin = toMinute(rec.mhEndTime || rec.end);
+  const hoursFromNormalEnd = (endMin - END_NORMAL_MIN) / 60;
+  const credit = MH_WEEKDAY + hoursFromNormalEnd * (MH_WEEKEND - MH_WEEKDAY);
+  return round2(Math.max(0, Math.min(MH_WEEKEND, credit)));
+}
+
 function nextMonth(ym, diff) {
   const d = new Date(yearOf(ym), monOf(ym) - 1 + diff, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -195,7 +203,8 @@ const LANGS = {
     mhAuto: "자동 (5시 기준)",
     mhManual: "직접 입력",
     mhHint: "평일 0.88 · 연장·토·일 1.0 · 5시 전 퇴근 직접 입력",
-    mhManualHint: "부분근무/조퇴 시 공수를 직접 입력 (예: 0.5)",
+    mhEndTimeLabel: "공수 계산용 퇴근 시간",
+    mhManualHint: "17:00은 0.88공수이며 퇴근 시간이 1시간 달라질 때마다 0.12씩 조정합니다. (최대 1.00)",
     mhHolidayWork: "공휴일(빨간날) 근무",
     mhHolidayWorkHint: "공휴일에 근무한 날 → 평일도 1.0공수",
     mhValueLabel: "공수",
@@ -296,7 +305,8 @@ const LANGS = {
     mhAuto: "Auto (till 5PM)",
     mhManual: "Manual entry",
     mhHint: "Weekday 0.88 · OT/Sat/Sun 1.0 · leave before 5PM: enter",
-    mhManualHint: "For partial days, enter the man-days directly (e.g. 0.5)",
+    mhEndTimeLabel: "End time for man-day calculation",
+    mhManualHint: "5 PM is 0.88 man-days; adjust by 0.12 per hour difference (max 1.00).",
     mhHolidayWork: "Worked on a holiday",
     mhHolidayWorkHint: "Working on a public holiday → counts 1.0 even on a weekday",
     mhValueLabel: "Man-days",
@@ -450,6 +460,15 @@ export default function ManHourTracker() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(null);
+
+  // 직접 입력 모드에서 별도 퇴근 시간 또는 근무 조건 변경 시 공수 자동 계산
+  useEffect(() => {
+    if (!form || form.kind !== "work" || form.mhMode !== "manual") return;
+    const next = calcManualMh(form);
+    if (next !== clampNum(form.mhValue)) {
+      setForm((prev) => ({ ...prev, mhValue: next }));
+    }
+  }, [form?.mhEndTime, form?.mhMode, form?.kind]);
 
   const [showSettings, setShowSettings] = useState(false);
   const [settingsDraft, setSettingsDraft] = useState(defaultSettings());
@@ -644,6 +663,7 @@ export default function ManHourTracker() {
       hourlyRate: settings.hourlyWage,
       start: "08:00",
       end: "17:00",
+      mhEndTime: "17:00",
       breakMin: 60,
       otHours: 0,
       otType: "",
@@ -668,6 +688,7 @@ export default function ManHourTracker() {
       hourlyRate: rec.hourlyRate ?? settings.hourlyWage,
       start: rec.start || "08:00",
       end: rec.end || "17:00",
+      mhEndTime: rec.mhEndTime || rec.end || "17:00",
       breakMin: rec.breakMin ?? 60,
       otHours: rec.otHours ?? 0,
       otType: rec.otType || "",
@@ -697,6 +718,7 @@ export default function ManHourTracker() {
     if (form.kind === "off") {
       delete base.start;
       delete base.end;
+      delete base.mhEndTime;
       delete base.breakMin;
       delete base.otHours;
       delete base.otType;
@@ -715,7 +737,15 @@ export default function ManHourTracker() {
       base.bonus = clampNum(base.bonus);
       base.breakMin = clampNum(base.breakMin);
       base.mhMode = form.mhMode === "manual" ? "manual" : "auto";
-      base.mhValue = clampNum(base.mhValue);
+      base.mhValue =
+        base.mhMode === "manual"
+          ? calcManualMh(base)
+          : clampNum(base.mhValue);
+      if (base.mhMode === "manual") {
+        base.mhEndTime = form.mhEndTime || form.end;
+      } else {
+        delete base.mhEndTime;
+      }
       base.holiday = !!base.holiday;
       if (base.mode === "daily") {
         base.dailyRate = clampNum(base.dailyRate) || settings.dailyWage;
@@ -841,6 +871,7 @@ export default function ManHourTracker() {
               hourlyRate: r.hourlyRate ?? null,
               start: r.start || "",
               end: r.end || "",
+              mhEndTime: r.mhEndTime || r.end || "",
               breakMin: r.breakMin ?? 60,
               otHours: r.otHours ?? 0,
               otType: r.otType || "",
@@ -907,6 +938,9 @@ export default function ManHourTracker() {
           ...(form.kind === "off"
             ? { kind: "off", paid: form.paid, paidValue: form.paidValue }
             : { kind: "work" }),
+          ...(form.kind === "work" && form.mhMode === "manual"
+            ? { mhValue: calcManualMh(form) }
+            : {}),
         },
         settings
       )
@@ -1968,17 +2002,22 @@ export default function ManHourTracker() {
                 {form.mhMode === "manual" ? (
                   <>
                     <div className="mh-field">
-                      <label>{t.mhValueLabel}</label>
+                      <label>{t.mhEndTimeLabel}</label>
                       <input
                         className="mh-input"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={form.mhValue ?? ""}
+                        type="time"
+                        value={form.mhEndTime || ""}
+                        aria-label={t.mhEndTimeLabel}
                         onChange={(e) =>
-                          setForm({ ...form, mhValue: e.target.value })
+                          setForm({ ...form, mhEndTime: e.target.value })
                         }
                       />
+                    </div>
+                    <div className="mh-preview">
+                      <span>{t.mhValueLabel}</span>
+                      <strong className="net">
+                        {fmtMh(calcManualMh(form))} {t.mhUnit}
+                      </strong>
                     </div>
                     <div className="mh-form-hint">{t.mhManualHint}</div>
                   </>
