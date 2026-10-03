@@ -1594,7 +1594,9 @@ export default function ManHourTracker() {
           margin-top: 22px;
         }
 
-        .mh-money-input {
+        /* iOS Safari automatically zooms focused inputs below 16px. */
+        .mh-input-row .mh-money-input {
+          font-size: 16px;
           font-variant-numeric: tabular-nums;
           text-align: right;
         }
