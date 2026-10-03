@@ -203,8 +203,8 @@ const LANGS = {
     mhAuto: "자동 (5시 기준)",
     mhManual: "직접 입력",
     mhHint: "평일 0.88 · 연장·토·일 1.0 · 5시 전 퇴근 직접 입력",
-    mhEndTimeLabel: "공수 계산용 퇴근 시간",
-    mhManualHint: "17:00은 0.88공수이며 퇴근 시간이 1시간 달라질 때마다 0.12씩 조정합니다. (최대 1.00)",
+    mhEndTimeLabel: "퇴근 시간",
+    mhManualHint: "17:00 = 0.88 공수 · 18:00 = 1.00 공수",
     mhHolidayWork: "공휴일(빨간날) 근무",
     mhHolidayWorkHint: "공휴일에 근무한 날 → 평일도 1.0공수",
     mhValueLabel: "공수",
@@ -305,8 +305,8 @@ const LANGS = {
     mhAuto: "Auto (till 5PM)",
     mhManual: "Manual entry",
     mhHint: "Weekday 0.88 · OT/Sat/Sun 1.0 · leave before 5PM: enter",
-    mhEndTimeLabel: "End time for man-day calculation",
-    mhManualHint: "5 PM is 0.88 man-days; adjust by 0.12 per hour difference (max 1.00).",
+    mhEndTimeLabel: "End time",
+    mhManualHint: "5 PM = 0.88 md · 6 PM = 1.00 md",
     mhHolidayWork: "Worked on a holiday",
     mhHolidayWorkHint: "Working on a public holiday → counts 1.0 even on a weekday",
     mhValueLabel: "Man-days",
@@ -1446,6 +1446,36 @@ export default function ManHourTracker() {
           -webkit-appearance: none;
         }
 
+        .mh-manual-mh-result {
+          min-width: 0;
+          width: 100%;
+          height: 38px;
+          align-self: end;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 6px;
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          color: var(--accent);
+          font-size: 13px;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+
+        .mh-manual-time-row .mh-field {
+          margin-bottom: 0;
+        }
+
+        .mh-manual-time-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .mh-manual-time-row + .mh-form-hint {
+          margin-top: 4px;
+        }
+
         .mh-holiday-toggle {
           width: 100%;
           padding: 10px 12px;
@@ -2001,23 +2031,22 @@ export default function ManHourTracker() {
 
                 {form.mhMode === "manual" ? (
                   <>
-                    <div className="mh-field">
-                      <label>{t.mhEndTimeLabel}</label>
-                      <input
-                        className="mh-input"
-                        type="time"
-                        value={form.mhEndTime || ""}
-                        aria-label={t.mhEndTimeLabel}
-                        onChange={(e) =>
-                          setForm({ ...form, mhEndTime: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="mh-preview">
-                      <span>{t.mhValueLabel}</span>
-                      <strong className="net">
+                    <div className="mh-time-row mh-manual-time-row">
+                      <div className="mh-field">
+                        <label>{t.mhEndTimeLabel}</label>
+                        <input
+                          className="mh-input"
+                          type="time"
+                          value={form.mhEndTime || ""}
+                          aria-label={t.mhEndTimeLabel}
+                          onChange={(e) =>
+                            setForm({ ...form, mhEndTime: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="mh-manual-mh-result" aria-live="polite">
                         {fmtMh(calcManualMh(form))} {t.mhUnit}
-                      </strong>
+                      </div>
                     </div>
                     <div className="mh-form-hint">{t.mhManualHint}</div>
                   </>
