@@ -1526,6 +1526,11 @@ export default function ManHourTracker() {
           margin-bottom: 0;
         }
 
+        .mh-ot-row .mh-input,
+        .mh-time-row .mh-input {
+          font-size: 16px;
+        }
+
         .mh-seg {
           display: flex;
           border: 1px solid var(--border);
@@ -1595,8 +1600,12 @@ export default function ManHourTracker() {
         }
 
         /* iOS Safari automatically zooms focused inputs below 16px. */
+        .mh-input-row .mh-settings-number-input,
         .mh-input-row .mh-money-input {
           font-size: 16px;
+        }
+
+        .mh-input-row .mh-money-input {
           font-variant-numeric: tabular-nums;
           text-align: right;
         }
@@ -2328,7 +2337,7 @@ export default function ManHourTracker() {
               <div className="mh-field">
                 <label>{t.stdHoursLabel}</label>
                 <input
-                  className="mh-input"
+                  className="mh-input mh-settings-number-input"
                   type="number"
                   min="1"
                   max="24"
@@ -2342,7 +2351,7 @@ export default function ManHourTracker() {
               <div className="mh-field">
                 <label>{t.otMultLabel}</label>
                 <input
-                  className="mh-input"
+                  className="mh-input mh-settings-number-input"
                   type="number"
                   min="1"
                   step="0.1"
@@ -2355,7 +2364,7 @@ export default function ManHourTracker() {
               <div className="mh-field">
                 <label>{t.taxRateLabel}</label>
                 <input
-                  className="mh-input"
+                  className="mh-input mh-settings-number-input"
                   type="number"
                   min="0"
                   step="0.1"
