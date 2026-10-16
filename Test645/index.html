@@ -8,8 +8,8 @@
     <meta name="google" content="notranslate" />
     <meta name="format-detection" content="telephone=no" />
     <title>로또 머신</title>
-    <script type="module" crossorigin src="./assets/index-CLJqR0Uc.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-ChKNHdBp.css">
+    <script type="module" crossorigin src="./assets/index-DuY6-2Hi.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CBbW_p_i.css">
   </head>
   <body>
     <div id="root"></div>
@@ -17,7 +17,7 @@
       // 임시 진단: 로드 시점 에러를 window.__errs 로 남긴다.
       window.__errs = [];
       window.addEventListener('error', (e) => {
-        window.__errs.push('ERR: ' + e.message + ' @ ' + (e.filename || '?') + ':' + (e.lineno || '?'));
+        window.__errs.push('ERR: ' + e.message + ' @ ' + (e.filename || '?') + ':' + (e.lineno || '?') + ' :: ' + (e.error && e.error.stack ? e.error.stack : String(e.error)));
       });
       window.addEventListener('unhandledrejection', (e) => {
         window.__errs.push('REJ: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
