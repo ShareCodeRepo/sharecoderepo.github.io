@@ -79,6 +79,30 @@
     font-size: 1rem;
   }
   .search-row input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .search-row input:not(:placeholder-shown),
+  .search-row input:focus {
+    background: #ffffff;
+    color: #1a1d24;
+  }
+  /* 네이티브 검색 지우기(x) 버튼 강조 */
+  .search-row input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px; margin-right: 4px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%231a1d24' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='5' y1='5' x2='15' y2='15'/%3E%3Cline x1='15' y1='5' x2='5' y2='15'/%3E%3C/svg%3E") no-repeat center;
+    background-size: 16px 16px;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity .15s ease, transform .15s ease;
+  }
+  .search-row input::-webkit-search-cancel-button:hover {
+    opacity: 1;
+    transform: scale(1.25);
+    filter: drop-shadow(0 0 2px rgba(255,107,53,.6));
+  }
+  .search-row input::-moz-search-clear-button {
+    width: 20px; height: 20px;
+  }
 
   .grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
