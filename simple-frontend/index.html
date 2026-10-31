@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>간단한 프론트엔드 데모</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --surface: #1a1d24;
+    --text: #e8eaed;
+    --muted: #9aa0a6;
+    --accent: #ff6b35;
+    --accent-2: #ffd166;
+    --border: #2a2e36;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.01em; }
+  .brand span { color: var(--accent); }
+
+  .hero {
+    padding: 80px 0 60px;
+    text-align: left;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero p {
+    color: var(--muted);
+    max-width: 560px;
+    font-size: 1.1rem;
+    margin: 0 0 32px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 22px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .cta:hover { background: #ff7f50; transform: translateY(-1px); }
+  .cta:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+  .cta:active { transform: translateY(0); }
+
+  /* 커스텀 메시지 박스 */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.55);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 420px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    animation: pop .18s ease;
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal h2 { margin: 0 0 8px; font-size: 1.25rem; }
+  .modal p { color: var(--muted); margin: 0 0 20px; }
+  .modal .close {
+    background: var(--accent); color: #fff; border: none;
+    padding: 10px 16px; border-radius: 10px; cursor: pointer;
+    font-weight: 600;
+    display: block; margin: 0 auto;
+  }
+  .modal .close:hover { background: #ff7f50; }
+  .modal .close:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 40px 0 80px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card h3 { margin: 0 0 8px; font-size: 1.15rem; }
+  .card p { color: var(--muted); margin: 0; font-size: 0.95rem; }
+  .card .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--accent-2);
+    background: rgba(255,209,102,.1);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta, .card { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="container brand">simple<span>.</span>demo</div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>간단한 프론트엔드 <em>데모</em></h1>
+      <p>HTML, CSS, 바닐라 JS로 만든 최소한의 페이지입니다. 반응형 레이아웃과 접근성을 고려한 기본 구조를 담았습니다.</p>
+      <button class="cta" type="button" onclick="handleClick()">시작하기 →</button>
+    </section>
+
+    <section class="grid" aria-label="기능 카드">
+      <article class="card">
+        <span class="tag">HTML</span>
+        <h3>시맨틱 구조</h3>
+        <p>header, main, section, article 등 시맨틱 태그로 의미 있는 마크업을 작성합니다.</p>
+      </article>
+      <article class="card">
+        <span class="tag">CSS</span>
+        <h3>반응형 그리드</h3>
+        <p>CSS Grid와 clamp()로 화면 크기에 맞춰 유연하게 레이아웃이 조정됩니다.</p>
+      </article>
+      <article class="card">
+        <span class="tag">JS</span>
+        <h3>가벼운 인터랙션</h3>
+        <p>바닐라 JavaScript로 최소한의 동작만 추가해 의존성을 줄였습니다.</p>
+      </article>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <h2 id="modalTitle">환영합니다!</h2>
+      <p>커스텀 메시지 박스가 정상적으로 동작합니다. 버튼 클릭 이벤트가 alert 대신 이 박스를 띄웁니다.</p>
+      <button class="close" type="button" onclick="closeModal()">닫기</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">© 2026 simple.demo — 데모 페이지</div>
+  </footer>
+
+  <script>
+    const backdrop = document.getElementById('backdrop');
+    function handleClick() {
+      backdrop.classList.add('open');
+    }
+    function closeModal() {
+      backdrop.classList.remove('open');
+    }
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
