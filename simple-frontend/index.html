@@ -15,6 +15,15 @@
     --border: #2a2e36;
     --radius: 14px;
   }
+  :root.light {
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --text: #1a1d24;
+    --muted: #5f6368;
+    --accent: #e85d2a;
+    --accent-2: #b8860b;
+    --border: #d8d4cc;
+  }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -23,182 +32,414 @@
     color: var(--text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    transition: background .2s ease, color .2s ease;
   }
+  .skip-link {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--accent); color: #fff; padding: 8px 12px;
+    z-index: 2000;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
   .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
   header {
-    padding: 32px 0;
+    padding: 24px 0;
     border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
   }
   .brand { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.01em; }
   .brand span { color: var(--accent); }
+  .toolbar { display: flex; gap: 8px; align-items: center; }
+  .icon-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 12px; border-radius: 10px;
+    cursor: pointer; font-size: 0.9rem;
+  }
+  .icon-btn:hover { border-color: var(--accent); }
+  .icon-btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
-  .hero {
-    padding: 80px 0 60px;
-    text-align: left;
-  }
-  .hero h1 {
-    font-size: clamp(2rem, 5vw, 3.4rem);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin: 0 0 16px;
-  }
-  .hero h1 em {
-    font-style: normal;
-    color: var(--accent);
-  }
-  .hero p {
-    color: var(--muted);
-    max-width: 560px;
-    font-size: 1.1rem;
-    margin: 0 0 32px;
-  }
+  .hero { padding: 60px 0 40px; text-align: left; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { color: var(--muted); max-width: 560px; font-size: 1.1rem; margin: 0 0 24px; }
   .cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 22px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius);
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform .15s ease, background .15s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px; background: var(--accent); color: #fff;
+    border: none; border-radius: var(--radius); font-weight: 600; font-size: 1rem;
+    cursor: pointer; transition: transform .15s ease, background .15s ease;
   }
   .cta:hover { background: #ff7f50; transform: translateY(-1px); }
   .cta:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
   .cta:active { transform: translateY(0); }
 
-  /* 커스텀 메시지 박스 */
-  .modal-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.55);
-    display: none;
-    align-items: center; justify-content: center;
-    z-index: 1000;
-    padding: 24px;
+  .search-row { display: flex; gap: 8px; margin: 0 0 24px; }
+  .search-row input {
+    flex: 1; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    font-size: 1rem;
   }
-  .modal-backdrop.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px;
-    max-width: 420px; width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
-    animation: pop .18s ease;
-  }
-  @keyframes pop {
-    from { opacity: 0; transform: scale(.96); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  .modal h2 { margin: 0 0 8px; font-size: 1.25rem; }
-  .modal p { color: var(--muted); margin: 0 0 20px; }
-  .modal .close {
-    background: var(--accent); color: #fff; border: none;
-    padding: 10px 16px; border-radius: 10px; cursor: pointer;
-    font-weight: 600;
-    display: block; margin: 0 auto;
-  }
-  .modal .close:hover { background: #ff7f50; }
-  .modal .close:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+  .search-row input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
 
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-    padding: 40px 0 80px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px; padding: 20px 0 40px;
   }
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
     transition: border-color .15s ease, transform .15s ease;
   }
   .card:hover { border-color: var(--accent); transform: translateY(-2px); }
   .card h3 { margin: 0 0 8px; font-size: 1.15rem; }
   .card p { color: var(--muted); margin: 0; font-size: 0.95rem; }
   .card .tag {
-    display: inline-block;
-    font-size: 0.75rem;
-    color: var(--accent-2);
-    background: rgba(255,209,102,.1);
-    padding: 4px 10px;
-    border-radius: 999px;
+    display: inline-block; font-size: 0.75rem; color: var(--accent-2);
+    background: rgba(255,209,102,.12); padding: 4px 10px; border-radius: 999px;
     margin-bottom: 12px;
   }
+  .card.hidden { display: none; }
 
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 24px 0;
-    color: var(--muted);
-    font-size: 0.9rem;
+  .tabs { display: flex; gap: 8px; margin: 20px 0 12px; flex-wrap: wrap; }
+  .tab {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 14px; border-radius: 10px; cursor: pointer;
   }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tab:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+  .tab-panel { display: none; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .tab-panel.active { display: block; }
+
+  .accordion { margin: 20px 0; }
+  .acc-item { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .acc-btn {
+    width: 100%; text-align: left; background: var(--surface); color: var(--text);
+    border: none; padding: 14px 16px; font-size: 1rem; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .acc-btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: -2px; }
+  .acc-content { display: none; padding: 12px 16px; color: var(--muted); }
+  .acc-content.open { display: block; }
+
+  .counter-row { display: flex; gap: 24px; flex-wrap: wrap; padding: 20px 0 40px; }
+  .counter { text-align: center; }
+  .counter .num { font-size: 2.4rem; font-weight: 700; color: var(--accent); }
+  .counter .label { color: var(--muted); font-size: 0.9rem; }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 24px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; max-width: 460px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4); animation: pop .18s ease;
+  }
+  @keyframes pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+  .modal h2 { margin: 0 0 8px; font-size: 1.25rem; }
+  .modal p { color: var(--muted); margin: 0 0 16px; }
+  .modal form { display: flex; flex-direction: column; gap: 10px; }
+  .modal input {
+    padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text); font-size: 1rem;
+  }
+  .modal input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .modal .err { color: #ff6b6b; font-size: 0.85rem; min-height: 1.2em; }
+  .modal .btn-row { display: flex; gap: 8px; justify-content: center; margin-top: 4px; }
+  .modal .close, .modal .submit {
+    border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600;
+  }
+  .modal .submit { background: var(--accent); color: #fff; }
+  .modal .close { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+
+  .toast-container {
+    position: fixed; right: 16px; bottom: 16px; z-index: 2000;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .toast {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 16px; border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3); min-width: 220px;
+    animation: slidein .2s ease;
+  }
+  .toast.success { border-color: #4caf50; }
+  .toast.error { border-color: #ff6b6b; }
+  @keyframes slidein { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+  .data-section { padding: 20px 0 60px; }
+  .data-section h2 { margin: 0 0 12px; }
+  .data-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .data-list li {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 10px 14px; border-radius: 8px;
+  }
+  .shortcuts { color: var(--muted); font-size: 0.85rem; margin: 12px 0 0; }
+
+  footer { border-top: 1px solid var(--border); padding: 24px 0; color: var(--muted); font-size: 0.9rem; }
+
+  .live-region { position: absolute; left: -9999px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .cta, .card { transition: none; }
+    .cta, .card, .toast, .modal { transition: none; animation: none; }
   }
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <div class="live-region" id="live" aria-live="polite" aria-atomic="true"></div>
+
   <header>
-    <div class="container brand">simple<span>.</span>demo</div>
+    <div class="brand">simple<span>.</span>demo</div>
+    <div class="toolbar">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="테마 전환">테마</button>
+      <button class="icon-btn" id="helpBtn" type="button" aria-label="단축키 도움말">?</button>
+    </div>
   </header>
 
-  <main class="container">
+  <main id="main" class="container">
     <section class="hero">
       <h1>간단한 프론트엔드 <em>데모</em></h1>
-      <p>HTML, CSS, 바닐라 JS로 만든 최소한의 페이지입니다. 반응형 레이아웃과 접근성을 고려한 기본 구조를 담았습니다.</p>
-      <button class="cta" type="button" onclick="handleClick()">시작하기 →</button>
+      <p>HTML, CSS, 바닐라 JS로 구현한 동작 예제 모음입니다. 모달, 테마, 필터, 탭, 아코디언, 카운터, 토스트, 데이터 로드, 단축키, 접근성을 포함합니다.</p>
+      <button class="cta" type="button" id="openModalBtn">시작하기 →</button>
     </section>
 
-    <section class="grid" aria-label="기능 카드">
-      <article class="card">
+    <!-- 1. 모달 폼 -->
+    <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal">
+        <h2 id="modalTitle">환영합니다!</h2>
+        <p>이름을 입력하고 제출하면 토스트 알림이 표시됩니다.</p>
+        <form id="modalForm">
+          <input type="text" id="nameInput" placeholder="이름" aria-label="이름" />
+          <div class="err" id="formErr"></div>
+          <div class="btn-row">
+            <button class="submit" type="submit">제출</button>
+            <button class="close" type="button" id="closeModalBtn">닫기</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. 테마는 헤더 버튼으로 제어 -->
+
+    <!-- 3. 카드 필터/검색 -->
+    <div class="search-row">
+      <input type="search" id="searchInput" placeholder="카드 검색..." aria-label="카드 검색" />
+    </div>
+    <section class="grid" id="cardGrid" aria-label="기능 카드">
+      <article class="card" data-tags="html semantic">
         <span class="tag">HTML</span>
         <h3>시맨틱 구조</h3>
         <p>header, main, section, article 등 시맨틱 태그로 의미 있는 마크업을 작성합니다.</p>
       </article>
-      <article class="card">
+      <article class="card" data-tags="css responsive grid">
         <span class="tag">CSS</span>
         <h3>반응형 그리드</h3>
         <p>CSS Grid와 clamp()로 화면 크기에 맞춰 유연하게 레이아웃이 조정됩니다.</p>
       </article>
-      <article class="card">
+      <article class="card" data-tags="js vanilla interaction">
         <span class="tag">JS</span>
         <h3>가벼운 인터랙션</h3>
         <p>바닐라 JavaScript로 최소한의 동작만 추가해 의존성을 줄였습니다.</p>
       </article>
     </section>
+
+    <!-- 4. 탭 -->
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="a" role="tab" aria-selected="true">탭 A</button>
+      <button class="tab" data-tab="b" role="tab" aria-selected="false">탭 B</button>
+      <button class="tab" data-tab="c" role="tab" aria-selected="false">탭 C</button>
+    </div>
+    <div class="tab-panel active" id="panel-a" role="tabpanel">탭 A 내용입니다.</div>
+    <div class="tab-panel" id="panel-b" role="tabpanel">탭 B 내용입니다.</div>
+    <div class="tab-panel" id="panel-c" role="tabpanel">탭 C 내용입니다.</div>
+
+    <!-- 4. 아코디언 -->
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false">아코디언 1 <span>+</span></button>
+        <div class="acc-content">첫 번째 아코디언 내용입니다.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false">아코디언 2 <span>+</span></button>
+        <div class="acc-content">두 번째 아코디언 내용입니다.</div>
+      </div>
+    </div>
+
+    <!-- 5. 카운터 -->
+    <div class="counter-row">
+      <div class="counter"><div class="num" data-target="120">0</div><div class="label">사용자</div></div>
+      <div class="counter"><div class="num" data-target="48">0</div><div class="label">프로젝트</div></div>
+      <div class="counter"><div class="num" data-target="99">0</div><div class="label">만족도</div></div>
+    </div>
+
+    <!-- 8. 데이터 로드 -->
+    <section class="data-section">
+      <h2>외부 데이터 (fetch)</h2>
+      <button class="cta" type="button" id="loadDataBtn">데이터 불러오기</button>
+      <ul class="data-list" id="dataList"></ul>
+    </section>
+
+    <p class="shortcuts">단축키: / 검색 포커스 · Esc 닫기 · ? 도움말</p>
   </main>
 
-  <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal">
-      <h2 id="modalTitle">환영합니다!</h2>
-      <p>커스텀 메시지 박스가 정상적으로 동작합니다. 버튼 클릭 이벤트가 alert 대신 이 박스를 띄웁니다.</p>
-      <button class="close" type="button" onclick="closeModal()">닫기</button>
-    </div>
-  </div>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <footer>
     <div class="container">© 2026 simple.demo — 데모 페이지</div>
   </footer>
 
   <script>
-    const backdrop = document.getElementById('backdrop');
-    function handleClick() {
-      backdrop.classList.add('open');
-    }
-    function closeModal() {
-      backdrop.classList.remove('open');
-    }
-    backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) closeModal();
+    // 7. localStorage 테마
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') root.classList.add('light');
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      root.classList.toggle('light');
+      localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
+      showToast('테마가 변경되었습니다.', 'success');
     });
+
+    // 6. 토스트
+    function showToast(msg, type = '') {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast ' + type;
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => { t.remove(); }, 3000);
+      announce(msg);
+    }
+
+    // 10. 라이브 영역 안내
+    function announce(msg) {
+      document.getElementById('live').textContent = msg;
+    }
+
+    // 1. 모달 폼 + 유효성 검사
+    const backdrop = document.getElementById('backdrop');
+    const nameInput = document.getElementById('nameInput');
+    const formErr = document.getElementById('formErr');
+    document.getElementById('openModalBtn').addEventListener('click', openModal);
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeModal();
+      // 9. 단축키
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+      if (e.key === '?') {
+        showToast('단축키: / 검색, Esc 닫기', 'success');
+      }
+    });
+    // 포커스 트랩
+    backdrop.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = backdrop.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    function openModal() {
+      backdrop.classList.add('open');
+      nameInput.value = localStorage.getItem('lastName') || '';
+      formErr.textContent = '';
+      setTimeout(() => nameInput.focus(), 0);
+    }
+    function closeModal() { backdrop.classList.remove('open'); }
+    document.getElementById('modalForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      if (!name) { formErr.textContent = '이름을 입력하세요.'; nameInput.focus(); return; }
+      localStorage.setItem('lastName', name);
+      closeModal();
+      showToast(name + '님, 환영합니다!', 'success');
+    });
+
+    // 3. 카드 필터/검색
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('#cardGrid .card').forEach(card => {
+        const text = (card.textContent + ' ' + (card.dataset.tags || '')).toLowerCase();
+        card.classList.toggle('hidden', q && !text.includes(q));
+      });
+    });
+
+    // 4. 탭
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected','true');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // 4. 아코디언
+    document.querySelectorAll('.acc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const content = btn.nextElementSibling;
+        const open = content.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(open));
+        btn.querySelector('span').textContent = open ? '−' : '+';
+      });
+    });
+
+    // 5. 카운터 (IntersectionObserver)
+    function animateCount(el) {
+      const target = parseInt(el.dataset.target, 10);
+      const duration = 1200;
+      const start = performance.now();
+      function step(now) {
+        const p = Math.min((now - start) / duration, 1);
+        el.textContent = Math.floor(p * target);
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(step);
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !e.target.dataset.done) {
+          e.target.dataset.done = '1';
+          animateCount(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.counter .num').forEach(n => io.observe(n));
+
+    // 8. fetch 데이터 로드
+    document.getElementById('loadDataBtn').addEventListener('click', async () => {
+      const list = document.getElementById('dataList');
+      list.innerHTML = '<li>불러오는 중...</li>';
+      try {
+        // 데모용: 공개 API (실패 시 폴백)
+        const res = await fetch('https://jsonplaceholder.typicode.com/users?_limit=5');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        list.innerHTML = '';
+        data.forEach(u => {
+          const li = document.createElement('li');
+          li.textContent = u.name + ' (' + u.email + ')';
+          list.appendChild(li);
+        });
+        showToast('데이터를 불러왔습니다.', 'success');
+      } catch (err) {
+        list.innerHTML = '';
+        const li = document.createElement('li');
+        li.textContent = '데이터 로드 실패: ' + err.message;
+        list.appendChild(li);
+        showToast('데이터 로드 실패', 'error');
+      }
+    });
+
+    // 9. 도움말 모달 버튼
+    document.getElementById('helpBtn').addEventListener('click', () => {
+      showToast('단축키: / 검색 포커스, Esc 닫기, ? 도움말', 'success');
     });
   </script>
 </body>
