@@ -99,6 +99,24 @@
 
   /* 즐겨찾기 토글 */
   .fav-filter { display: flex; gap: 8px; align-items: center; font-size: 0.9rem; color: var(--muted); }
+  .fav-filter input[type="checkbox"] {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; margin: 0; flex-shrink: 0;
+    border: 2px solid var(--border); border-radius: 4px;
+    background: var(--surface); cursor: pointer; position: relative;
+  }
+  .fav-filter input[type="checkbox"]:checked {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .fav-filter input[type="checkbox"]:checked::after {
+    content: ''; position: absolute;
+    left: 5px; top: 1px; width: 5px; height: 9px;
+    border: solid #fff; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .fav-filter input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--accent-2); outline-offset: 2px;
+  }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; padding: 20px 0 40px; }
   .card {
