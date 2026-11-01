@@ -100,27 +100,26 @@
   /* 즐겨찾기 토글 */
   .fav-filter { display: flex; gap: 8px; align-items: center; font-size: 0.9rem; color: var(--muted); }
   /* 토글 스위치 (즐겨찾기만) */
-  .fav-filter input[type="checkbox"] {
-    -webkit-appearance: none; appearance: none;
-    width: 36px; height: 20px; margin: 0; flex-shrink: 0;
-    border: none; border-radius: 999px;
-    background: var(--border); cursor: pointer; position: relative;
-    transition: background .2s ease;
+  .fav-filter .toggle-switch {
+    width: 36px; height: 20px; margin: 0; padding: 0; border: none;
+    border-radius: 999px; background: var(--border); cursor: pointer;
+    position: relative; transition: background .2s ease;
+    flex: 0 0 36px;
   }
-  .fav-filter input[type="checkbox"]::before {
+  .fav-filter .toggle-switch::before {
     content: ''; position: absolute;
     top: 2px; left: 2px; width: 16px; height: 16px;
     background: #fff; border-radius: 50%;
     box-shadow: 0 1px 2px rgba(0,0,0,.3);
     transition: transform .2s ease;
   }
-  .fav-filter input[type="checkbox"]:checked {
+  .fav-filter .toggle-switch[aria-checked="true"] {
     background: var(--accent);
   }
-  .fav-filter input[type="checkbox"]:checked::before {
+  .fav-filter .toggle-switch[aria-checked="true"]::before {
     transform: translateX(16px);
   }
-  .fav-filter input[type="checkbox"]:focus-visible {
+  .fav-filter .toggle-switch:focus-visible {
     outline: 2px solid var(--accent-2); outline-offset: 2px;
   }
 
@@ -296,7 +295,7 @@
         <option value="name">이름순</option>
         <option value="fav">즐겨찾기 먼저</option>
       </select>
-      <label class="fav-filter"><input type="checkbox" id="favOnly" /> 즐겨찾기만</label>
+      <label class="fav-filter"><button type="button" class="toggle-switch" id="favOnly" role="switch" aria-checked="false" aria-label="즐겨찾기만"></button> 즐겨찾기만</label>
     </div>
 
     <!-- 드래그 가능한 카드 그리드 -->
@@ -458,7 +457,7 @@
     }
     function renderCards() {
       const q = searchInput.value.toLowerCase();
-      const favsOnly = favOnly.checked;
+      const favsOnly = favOnly.getAttribute('aria-checked') === 'true';
       const sort = sortSelect.value;
       const grid = document.getElementById('cardGrid');
       const cards = Array.from(grid.querySelectorAll('.card'));
@@ -489,7 +488,11 @@
     searchInput.addEventListener('input', () => { renderCards(); updateClearBtn(); });
     searchClear.addEventListener('click', () => { searchInput.value = ''; renderCards(); updateClearBtn(); searchInput.focus(); });
     sortSelect.addEventListener('change', renderCards);
-    favOnly.addEventListener('change', renderCards);
+    favOnly.addEventListener('click', () => {
+      const now = favOnly.getAttribute('aria-checked') !== 'true';
+      favOnly.setAttribute('aria-checked', String(now));
+      renderCards();
+    });
     document.querySelectorAll('.fav-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
