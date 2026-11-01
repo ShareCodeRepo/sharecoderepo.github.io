@@ -81,35 +81,35 @@
   .cta:active { transform: translateY(0); }
 
   .search-row { display: flex; gap: 8px; margin: 0 0 24px; }
+  .search-wrap { position: relative; flex: 1; }
   .search-row input {
-    flex: 1; padding: 12px 14px; border-radius: 10px;
+    width: 100%; padding: 12px 40px 12px 14px; border-radius: 10px;
     border: 1px solid var(--border); background: var(--surface); color: var(--text);
     font-size: 1rem;
+    -webkit-appearance: none; appearance: none;
   }
   .search-row input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
   .search-row input:not(:placeholder-shown) {
     background: #ffffff;
     color: #1a1d24;
   }
-  /* 네이티브 검색 지우기(x) 버튼 강조 */
-  .search-row input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px; height: 20px; margin-right: 4px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%231a1d24' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='5' y1='5' x2='15' y2='15'/%3E%3Cline x1='15' y1='5' x2='5' y2='15'/%3E%3C/svg%3E") no-repeat center;
-    background-size: 16px 16px;
-    cursor: pointer;
-    opacity: 0.45;
-    transition: opacity .15s ease, transform .15s ease;
+  /* iOS Safari 네이티브 지우기 버튼 숨김 (커스텀 버튼 사용) */
+  .search-row input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+  .search-row input::-moz-search-clear-button { display: none; }
+  .search-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    width: 28px; height: 28px; border: none; border-radius: 50%;
+    background: rgba(0,0,0,.08); color: #1a1d24;
+    font-size: 16px; line-height: 1; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+    transition: background .15s ease, transform .15s ease, opacity .15s ease;
   }
-  .search-row input::-webkit-search-cancel-button:hover {
-    opacity: 1;
-    transform: scale(1.25);
-    filter: drop-shadow(0 0 2px rgba(234,88,12,.6));
+  .search-clear.show { display: flex; }
+  .search-clear:hover {
+    background: var(--accent); color: #fff;
+    transform: translateY(-50%) scale(1.15);
   }
-  .search-row input::-moz-search-clear-button {
-    width: 20px; height: 20px;
-  }
+  .search-clear:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
   .grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -258,7 +258,10 @@
 
     <!-- 3. 카드 필터/검색 -->
     <div class="search-row">
-      <input type="search" id="searchInput" placeholder="카드 검색..." aria-label="카드 검색" />
+      <div class="search-wrap">
+        <input type="search" id="searchInput" placeholder="카드 검색..." aria-label="카드 검색" />
+        <button type="button" class="search-clear" id="searchClear" aria-label="검색어 지우기" hidden>×</button>
+      </div>
     </div>
     <section class="grid" id="cardGrid" aria-label="기능 카드">
       <article class="card" data-tags="html semantic">
@@ -393,14 +396,28 @@
       showToast(name + '님, 환영합니다!', 'success');
     });
 
-    // 3. 카드 필터/검색
-    document.getElementById('searchInput').addEventListener('input', (e) => {
+    // 3. 카드 필터/검색 + 커스텀 지우기 버튼
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    function updateClearBtn() {
+      const has = searchInput.value.trim().length > 0;
+      searchClear.classList.toggle('show', has);
+      searchClear.hidden = !has;
+    }
+    searchInput.addEventListener('input', (e) => {
       const q = e.target.value.toLowerCase();
       document.querySelectorAll('#cardGrid .card').forEach(card => {
         const text = (card.textContent + ' ' + (card.dataset.tags || '')).toLowerCase();
         card.classList.toggle('hidden', q && !text.includes(q));
       });
+      updateClearBtn();
     });
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    });
+    updateClearBtn();
 
     // 4. 탭
     document.querySelectorAll('.tab').forEach(tab => {
